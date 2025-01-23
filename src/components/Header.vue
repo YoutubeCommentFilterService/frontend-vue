@@ -4,7 +4,8 @@
         <div class="header-left"></div>
         <h1 class="title">title</h1>
         <div class="header-right">
-            <RouterLink to="login" class="login-btn">login</RouterLink>
+            <RouterLink v-if="authStore.isLoggedIn" to="my-page" class="login-btn">my page</RouterLink>
+            <RouterLink v-else to="login" class="login-btn">login</RouterLink>
         </div>
       </div>
       <nav class="navigation">
@@ -15,6 +16,13 @@
       </nav>
     </header>
   </template>
+
+<script setup lang="ts">
+import { useAuthStore } from '@/stores/auth';
+const authStore = useAuthStore();
+
+
+</script>
 
 <style scoped>
 .header {

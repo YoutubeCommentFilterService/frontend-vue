@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import Comment from '@/components/Comment.vue';
+import router from '@/router';
+import { useAuthStore } from '@/stores/auth';
+import { onMounted } from 'vue';
 
 const params = history.state;
 const videoId: string = params.videoId as string;
+const authStore = useAuthStore();
 
 const generateFilterData = (value: string): string => {
     const filterData = [{
@@ -21,6 +25,13 @@ const onCommentClick = (videoId: string, value: string) => {
 
     window.open(uri, '_blank');
 }
+
+onMounted(() => {
+    if (!authStore.isLoggedIn) {
+        alert("로그인을 먼저 해주세요")
+        router.replace("/");
+    }
+})
 
 </script>
 

@@ -29,13 +29,15 @@ html, body {
 }
 
 #app {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
 .main-content {
-  flex: 1;
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
 }
 
 a {

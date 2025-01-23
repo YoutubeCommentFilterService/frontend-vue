@@ -8,7 +8,9 @@ const router = createRouter({
     { path: '/videos', component: () => import('../views/VideosView.vue') },
     { path: '/login', component: () => import('../views/LoginView.vue') },
     { path: '/after-login', component: () => import('../views/AfterLoginView.vue') },
-    { path: '/comments', component: () => import('../views/CommentsView.vue') }
+    { path: '/comments', component: () => import('../views/CommentsView.vue') },
+    { path: '/my-page', component: () => import('../views/MyPageView.vue')},
+    { path: '/inf-scroll', component: () => import('../views/InfScrollTestView.vue')},
   ],
 })
 

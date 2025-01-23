@@ -1,4 +1,5 @@
 import type { VideoResource, VideoResponseData } from "@/types/video-interface"
+import { count } from "console";
 import { defineStore } from "pinia"
 import { ref } from "vue"
 
@@ -18,5 +19,32 @@ export const useVideoStore = defineStore('video', () => {
     videoPage.value = 1;
   }
 
-  return { videoList, flush, push, videoPage, isLast};
+  const backup = () => {
+    localStorage.setItem('videoStore', JSON.stringify({
+      videoList: videoList.value,
+      videoPage: videoPage.value,
+      isLast: isLast.value,
+    }))
+  }
+
+  const restore = () => {
+    const savedState = localStorage.getItem('videoStore');
+    if (savedState) {
+      const states: VideoJSONBackupData = JSON.parse(savedState);
+      videoList.value = states.videoList;
+      videoPage.value = states.videoPage;
+      isLast.value = states.isLast;
+    }
+  }
+
+  return { 
+    videoList, flush, push, videoPage, isLast,
+    backup, restore
+  };
 })
+
+interface VideoJSONBackupData {
+  videoList: VideoResource[];
+  videoPage: number;
+  isLast: boolean;
+}
