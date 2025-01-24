@@ -21,14 +21,13 @@ const fetchComments = async (): Promise<CommentResponseData> => {
     return response.data;
 }
 
-
 onMounted(() => {
-    fetchComments()
-        .then((data) => {
-            isLast.value = data.isLast;
-            items.value = [...items.value, ...data.items];
-        })
-        .catch((err) => console.log(err));
+    // fetchComments()
+    //     .then((data) => {
+    //         isLast.value = data.isLast;
+    //         items.value = [...items.value, ...data.items];
+    //     })
+    //     .catch((err) => console.log(err));
 })
 
 </script>

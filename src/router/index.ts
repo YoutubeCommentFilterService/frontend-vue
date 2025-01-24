@@ -11,6 +11,7 @@ const router = createRouter({
     { path: '/comments', component: () => import('../views/CommentsView.vue') },
     { path: '/my-page', component: () => import('../views/MyPageView.vue')},
     { path: '/inf-scroll', component: () => import('../views/InfScrollTestView.vue')},
+    { path: '/recent', component: () => import('../views/RecentCommentsView.vue')}
   ],
 })
 

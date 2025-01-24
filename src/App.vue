@@ -11,11 +11,15 @@
 import Header from '@/components/Header.vue'
 import { tokenAxiosInstance, LOCAL_STORAGE_REFRESH_TOKEN } from './utils';
 import { onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
 
 onMounted(() => {
   const refreshToken: string | null = localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN);
   if (refreshToken) {
     tokenAxiosInstance.post("/member/renew-token", { refreshToken })
+      .then(() => {authStore.login();})
   }
 })
 </script>

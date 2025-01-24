@@ -1,4 +1,5 @@
 interface CommentResource {
+    id: string;
     textOriginal: string;
     authorNickname: string;
 }

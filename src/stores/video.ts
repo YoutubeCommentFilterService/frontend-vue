@@ -1,5 +1,4 @@
 import type { VideoResource, VideoResponseData } from "@/types/video-interface"
-import { count } from "console";
 import { defineStore } from "pinia"
 import { ref } from "vue"
 
