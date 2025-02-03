@@ -1,14 +1,23 @@
 interface VideoResource {
-    videoId: string;
-    videoTitle: string;
-    videoThumb: string;
+    id: string;
+    title: string;
+    thumbnail: string;
     publishedAt: string;
+    description: string;
 }
 
 interface VideoResponseData {
-    isLast: boolean;
-    totalResoult: number;
-    videoResources: VideoResource[];
+    isLast: string;
+    items: VideoResource[];
 }
 
-export type { VideoResource, VideoResponseData };
+interface InterVideoListNComment {
+    video: {
+        id: string;
+        title: string;
+        thumbnail: string;
+        description: string;
+    }
+}
+
+export type { VideoResource, VideoResponseData, InterVideoListNComment };

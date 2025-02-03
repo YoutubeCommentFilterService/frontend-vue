@@ -1,7 +1,9 @@
 interface CommentResource {
     id: string;
-    textOriginal: string;
-    authorNickname: string;
+    comment: string;
+    nickname: string;
+    commentPredict: string;
+    nicknamePredict: string;
 }
 
 interface CommentResponseData {
