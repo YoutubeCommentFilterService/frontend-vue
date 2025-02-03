@@ -22,8 +22,11 @@ tokenAxiosInstance.interceptors.response.use(
 
         const originalRequest = error.config;
         if (originalRequest.url === "/member/renew-token") return Promise.reject(error);
+        
+        if (originalRequest._retry) return Promise.reject(error);
+        originalRequest._retry = true;
+
         if (error.response?.status === 401) {
-            originalRequest._retry = true;
 
             const refreshToken: string | null = localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN);
             if (!refreshToken) return Promise.reject(error);
@@ -31,12 +34,12 @@ tokenAxiosInstance.interceptors.response.use(
             try {
                 await tokenAxiosInstance.post("/member/renew-token", { refreshToken });
                 const response = await tokenAxiosInstance.get("/member/refresh-token");
-                const data = response.data;
-                localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN, data['refreshToken'])
+                
+                localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN, response.data['refreshToken'])
 
                 return tokenAxiosInstance(error.config)
             } catch (err) {
-
+                return Promise.reject(error);
             }
         }
 
