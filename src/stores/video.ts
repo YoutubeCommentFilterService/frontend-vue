@@ -7,19 +7,22 @@ export const useVideoStore = defineStore('video', () => {
   const videoPage = ref<number>(1);
   const isLast = ref<boolean>(false);
 
+  const localStorageKey = 'video-store'
+
   const push = (data: VideoResponseData) => {
-    videoList.value = [...videoList.value, ...data.videoResources];
+    videoList.value = [...videoList.value, ...data.items];
     videoPage.value++;
-    if (data.isLast) isLast.value = data.isLast;
+    isLast.value = data.isLast === 'Y' ? true : false;
   }
 
   const flush = () => {
+    localStorage.removeItem(localStorageKey)
     videoList.value = [];
     videoPage.value = 1;
   }
 
   const backup = () => {
-    localStorage.setItem('videoStore', JSON.stringify({
+    localStorage.setItem(localStorageKey, JSON.stringify({
       videoList: videoList.value,
       videoPage: videoPage.value,
       isLast: isLast.value,
@@ -27,7 +30,7 @@ export const useVideoStore = defineStore('video', () => {
   }
 
   const restore = () => {
-    const savedState = localStorage.getItem('videoStore');
+    const savedState = localStorage.getItem(localStorageKey);
     if (savedState) {
       const states: VideoJSONBackupData = JSON.parse(savedState);
       videoList.value = states.videoList;
