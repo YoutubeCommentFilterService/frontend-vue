@@ -50,6 +50,14 @@ const refreshVideos = async (take: number = 50): Promise<VideoResponseData | voi
   videoStore.push(response.data)
 }
 
+const sleep = async (time: number) => {
+  await new Promise(resolve => {
+    setTimeout(() => {
+      resolve(null)
+    }, time)
+  })
+}
+
 onMounted(() => {
   if (!authStore.isLoggedIn) {
     alert('로그인을 먼저 해주세요')
@@ -64,16 +72,25 @@ onMounted(() => {
       :is-last="videoStore.isLast"
       :load-more-item="
         async () => {
-          fetchVideos(videoStore.videoPage, 10)
-            .then((data) => {
-              if (data) videoStore.push(data)
-            })
-            .catch((err) => console.error(err))
+          try {
+            const data = await fetchVideos(videoStore.videoPage, 5)
+            // 스피너 디버그용
+            // await sleep(3000)
+
+            if (data) {
+              videoStore.push(data)
+              return true
+            }
+            return false
+          } catch (err) {
+            console.error(err)
+            return false
+          }
         }
       "
       :refresh-item="
         async () => {
-          await refreshVideos(10)
+          await refreshVideos(5)
         }
       "
     >
