@@ -58,6 +58,27 @@ const sleep = async (time: number) => {
   })
 }
 
+const maxFetchNum = 50
+const loadMoreItem = async () => {
+  try {
+    const data = await fetchVideos(videoStore.videoPage, maxFetchNum)
+    // 스피너 디버그용
+    // await sleep(3000)
+
+    if (data) {
+      videoStore.push(data)
+      return true
+    }
+    return false
+  } catch (err) {
+    console.error(err)
+    return false
+  }
+}
+const refreshItem = async () => {
+  await refreshVideos(maxFetchNum)
+}
+
 onMounted(() => {
   if (!authStore.isLoggedIn) {
     alert('로그인을 먼저 해주세요')
@@ -70,29 +91,8 @@ onMounted(() => {
   <div class="video-root-page">
     <InfiniteScroll
       :is-last="videoStore.isLast"
-      :load-more-item="
-        async () => {
-          try {
-            const data = await fetchVideos(videoStore.videoPage, 5)
-            // 스피너 디버그용
-            // await sleep(3000)
-
-            if (data) {
-              videoStore.push(data)
-              return true
-            }
-            return false
-          } catch (err) {
-            console.error(err)
-            return false
-          }
-        }
-      "
-      :refresh-item="
-        async () => {
-          await refreshVideos(5)
-        }
-      "
+      :load-more-item="loadMoreItem"
+      :refresh-item="refreshItem"
     >
       <div class="video-grid">
         <div
