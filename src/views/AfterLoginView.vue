@@ -3,21 +3,20 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth';
-import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth'
+import { tokenAxiosInstance } from '@/utils'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
-const authStore = useAuthStore();
+const router = useRouter()
+const authStore = useAuthStore()
 
-fetch("http://localhost:8080/member/refresh-token", {
-  credentials: 'include',
-})
-  .then((res) => res.json())
-  .then((json) => {
-    localStorage.setItem("refresh_token", json.refreshToken)
-    authStore.login();
-    router.push("/");
+tokenAxiosInstance
+  .get('/api/member/refresh-token')
+  .then((res) => res.data)
+  .then((data) => {
+    localStorage.setItem('refresh_token', data.refreshToken)
+    authStore.login()
+    router.push('/')
   })
-  .catch((err) => console.log(err));
-
+  .catch((err) => console.error(err))
 </script>
