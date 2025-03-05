@@ -20,7 +20,6 @@
       <RouterLink to="/" class="nav-item">Home</RouterLink>
       <RouterLink to="/videos" class="nav-item">Spams</RouterLink>
       <RouterLink to="/recent" class="nav-item">최근 댓글</RouterLink>
-      <RouterLink to="/inf-scroll" class="nav-item">무한스크롤</RouterLink>
       <div class="header-right"></div>
     </nav>
   </header>
