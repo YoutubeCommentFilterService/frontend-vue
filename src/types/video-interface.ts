@@ -17,6 +17,7 @@ interface InterVideoListNComment {
         title: string;
         thumbnail: string;
         description: string;
+        publishedAt: string;
     }
 }
 

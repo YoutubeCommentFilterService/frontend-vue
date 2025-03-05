@@ -20,6 +20,7 @@ const onVideoClick = (video: VideoResource) => {
         title: video.title,
         thumbnail: video.thumbnail,
         description: video.description,
+        publishedAt: convertUTC2KST(video.publishedAt)
       },
     },
   })
@@ -79,6 +80,10 @@ const refreshItem = async () => {
   await refreshVideos(maxFetchNum)
 }
 
+const convertUTC2KST = (datetime: string): string => {
+  return new Date(datetime).toLocaleString('ko-kr', { timeZone: 'Asia/Seoul' })
+}
+
 onMounted(() => {
   if (!authStore.isLoggedIn) {
     alert('로그인을 먼저 해주세요')
@@ -104,8 +109,7 @@ onMounted(() => {
           <img :src="item.thumbnail" />
           <p class="title">{{ item.title }}</p>
           <p class="meta">
-            업로드 일자:
-            {{ new Date(item.publishedAt).toLocaleString('ko-kr', { timeZone: 'Asia/Seoul' }) }}
+            업로드 일자: {{ convertUTC2KST(item.publishedAt) }}
           </p>
         </div>
       </div>
