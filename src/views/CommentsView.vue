@@ -2,7 +2,7 @@
 import { useAuthStore } from '@/stores/auth';
 import { onMounted, ref } from 'vue';
 import { tokenAxiosInstance } from '@/utils';
-import type { CommentResource, CommentResponseData } from "@/types/comment-interface";
+import type { CommentResource, CommentResponseData, PredictCategory } from "@/types/comment-interface";
 import type { InterVideoListNComment } from "@/types/video-interface";
 import InfiniteScroll from '@/components/InfiniteScroll.vue';
 
@@ -19,17 +19,6 @@ const selectedCategories = ref<{
     nickname: string[],
     comment: string[]
 }>({ nickname: [], comment: []});
-
-// const fetchComments = async (): Promise<CommentResponseData> => {
-//     const response = await tokenAxiosInstance.get<CommentResponseData>(`/api/youtube/videos/${state.video.id}`, {
-//         withCredentials: true,
-//         params: {
-//             page: 1,
-//             take: 100,
-//         }
-//     })
-//     return response.data;
-// }
 
 const generatePTageTitle = (category: string[], prob: number[]): string => {
     return category.map((cat, idx) => `${cat}: ${String(Math.round(prob[idx] * 100)).padStart(3, ' ')}%`).join(',')
@@ -53,13 +42,11 @@ const loadMoreItem = async () => {
         const data = await fetchComments(pageNum.value, maxFetchNum)
 
         if (data) {
-            isLast.value = data.isLast;
+            isLast.value = data.isLast === 'Y' ? true : false;
             items.value = [...items.value, ...data.items];
-            const category = data.predictCategory
-            nicknameCategories.value = category.nicknamePredictCategory;
-            commentCategories.value = category.commentPredictCategory;
             pageNum.value += 1
             filteredItems.value = items.value
+            return true;
         }
         return false
     } catch (err) {
@@ -76,19 +63,22 @@ const toggleCategory = (type: 'comment' | 'nickname', category: string) => {
     else selected.splice(index, 1);
 
     filterDatas();
-
-    console.log(selectedCategories.value)
 }
 
 const filterDatas = () => {
     const categories = selectedCategories.value
     const isEmptyFilter: boolean = categories['comment'].length === 0 && categories['comment'].length === 0
-    filteredItems.value = items.value.filter(data => {
-        return isEmptyFilter || (
-            categories['comment'].includes(data.commentPredict) || 
-            categories['nickname'].includes(data.nicknamePredict)
-        )
-    })
+    if (isEmptyFilter) {
+        filteredItems.value = items.value
+    }
+    else {
+        filteredItems.value = items.value.filter(data => {
+            return isEmptyFilter || (
+                categories['comment'].includes(data.commentPredict) || 
+                categories['nickname'].includes(data.nicknamePredict)
+            )
+        })
+    }
 
 }
 
@@ -96,21 +86,17 @@ const isCategorySelected = (type: 'comment' | 'nickname', category: string): boo
     return selectedCategories.value[type].includes(category);
 }
 
-onMounted(() => {
+onMounted(async () => {
     // if (!authStore.isLoggedIn) {
     //     alert("로그인을 먼저 해주세요")
     //     router.replace("/");
     // }
 
-    // fetchComments()
-    //     .then((data) => {
-    //         console.log(data)
-    //         isLast.value = data.isLast;
-    //         items.value = [...items.value, ...data.items];
-    //         nicknameCategories.value = data.predictCategory.nicknamePredictCategory;
-    //         commentCategories.value = data.predictCategory.commentPredictCategory;
-    //     })
-    //     .catch((err) => console.log(err));
+    const response = await tokenAxiosInstance.get<PredictCategory>('/api/metadata/predict-class')
+    const categories = response.data
+
+    nicknameCategories.value = categories.nicknameCategories.slice(1)
+    commentCategories.value = categories.commentCategories.slice(1)
 })
 
 </script>
@@ -126,7 +112,7 @@ onMounted(() => {
                 </div>
                 <div class="video-detail-item">
                     <p class="label">동영상 설명</p>
-                    <p class="content">{{ state.video.description }}ioasjdfoisdjaoifjasdf;iojsad;oifjasd;iofjsdiof;jsdaoifjsdiojfsioadjfsiodafjio;sdajfo;isjadfiosjdf;oijsdfa;iojofasdijoisfajdiosdjafoi;jsdfioajsdaoijf</p>
+                    <p class="content">{{ state.video.description }}</p>
                 </div>
                 <div class="video-detail-item">
                     <p class="label">업로드 일자</p>
@@ -138,12 +124,13 @@ onMounted(() => {
             :is-last="isLast"
             :load-more-item="loadMoreItem"
             :refresh-item="() => {}"
+            spinner-text="댓글 목록을 불러오는 중입니다!!"
         >
             <div class="scroll-top-section">
-                <div>
+                <div v-if="nicknameCategories.length">
                     <span>닉네임</span>
                     <button 
-                        v-for="(category, idx) in nicknameCategories.slice(1)" 
+                        v-for="(category, idx) in nicknameCategories" 
                         :key="idx"
                         @click="toggleCategory('nickname', category)"
                         :class="{ active: isCategorySelected('nickname', category)}"
@@ -151,10 +138,10 @@ onMounted(() => {
                         {{ category }}
                     </button>
                 </div>
-                <div>
+                <div v-if="commentCategories.length">
                     <span>댓글</span>
                     <button 
-                        v-for="(category, idx) in commentCategories.slice(1)" 
+                        v-for="(category, idx) in commentCategories" 
                         :key="idx"
                         @click="toggleCategory('comment', category)"
                         :class="{ active: isCategorySelected('comment', category)}"
@@ -163,10 +150,12 @@ onMounted(() => {
                     </button>
                 </div>
             </div>
-            <div v-for="(item, index) in filteredItems" :key="index" class="item">
-                <p> comment id: {{ item.id }}</p>
-                <p :title="generatePTageTitle(nicknameCategories, item.nicknameProb)"> {{ item.nickname }}({{ item.nicknamePredict }})</p>
-                <p :title="generatePTageTitle(commentCategories, item.commentProb)" class="meta"> {{ item.comment }}({{ item.commentPredict }})</p>
+            <div v-if="filteredItems.length > 0">
+                <div v-for="(item, index) in filteredItems" :key="index" class="item">
+                    <p> comment id: {{ item.id }}</p>
+                    <p :title="generatePTageTitle(nicknameCategories, item.nicknameProb)"> {{ item.nickname }}({{ item.nicknamePredict }})</p>
+                    <p :title="generatePTageTitle(commentCategories, item.commentProb)" class="meta"> {{ item.comment }}({{ item.commentPredict }})</p>
+                </div>
             </div>
         </InfiniteScroll>
     </div>
@@ -290,5 +279,25 @@ li {
 .scroll-top-section > div > span:first-child {
     display: inline-block;
     width: 60px;
+}
+
+.no-results {
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    height: 100%;
+    color: #7f8c8d;
+    background-color: #ecf0f1;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.no-results p {
+    margin: 0;
+    font-weight: bold;
+    color: #bdc3c7;
 }
 </style>
