@@ -98,6 +98,7 @@ onMounted(() => {
       :is-last="videoStore.isLast"
       :load-more-item="loadMoreItem"
       :refresh-item="refreshItem"
+      spinner-text="동영상을 불러오는 중입니다!!"
     >
       <div class="video-grid">
         <div
@@ -108,9 +109,7 @@ onMounted(() => {
         >
           <img :src="item.thumbnail" />
           <p class="title">{{ item.title }}</p>
-          <p class="meta">
-            업로드 일자: {{ convertUTC2KST(item.publishedAt) }}
-          </p>
+          <p class="meta">업로드 일자: {{ convertUTC2KST(item.publishedAt) }}</p>
         </div>
       </div>
     </InfiniteScroll>

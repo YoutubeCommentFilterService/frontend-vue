@@ -9,14 +9,13 @@ interface CommentResource {
 }
 
 interface PredictCategory {
-    commentPredictCategory: string[];
-    nicknamePredictCategory: string[];
+    commentCategories: string[];
+    nicknameCategories: string[];
 }
 
 interface CommentResponseData {
-    isLast: boolean;
+    isLast: string;
     items: CommentResource[];
-    predictCategory: PredictCategory;
 }
 
 export type { CommentResource, CommentResponseData, PredictCategory };
