@@ -15,6 +15,11 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  spinnerText: {
+    type: String,
+    required: true,
+    default: '로딩중...'
+  }
 })
 
 const isLoading = ref(false)
@@ -116,7 +121,7 @@ onUnmounted(() => {
       <slot></slot>
       <div v-if="isLoading" class="loading">
         <div class="loading-spinner"></div>
-        <p>더 많은 영상 로딩 중...</p>
+        <p>{{ props.spinnerText }}</p>
       </div>
       <div v-if="!props.isLast && !isLoading" ref="infScrollPointer" class="scroll-trigger"></div>
     </div>
