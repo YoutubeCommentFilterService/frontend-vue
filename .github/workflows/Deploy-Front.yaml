@@ -36,6 +36,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             whoami
-            scp -r ./dist/* ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/var/www/html/
+            scp -r ./dist/* ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:./dist
             bash test.sh
      
