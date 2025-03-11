@@ -139,6 +139,38 @@ onUnmounted(() => {
   position: relative;
   height: 100%;
   width: 100%;
+
+  /* firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #77b8a3 #f0f0f0;
+}
+
+/* Webkit 기반 브라우저 (Chrome, Safari, Edge 등) */
+.scroll-container::-webkit-scrollbar {
+  width: 12px;  /* 스크롤바의 너비 */
+  background-color: transparent;  /* 스크롤바 배경을 투명하게 */
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background-color: #f0f0f0;  /* 트랙 배경 색 */
+  border-radius: 10px;  /* 둥근 모서리 */
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: #77b8a3;  /* thumb 색상: 녹색 */
+  border-radius: 10px;  /* 둥근 모서리 */
+  border: 2px solid #ffffff;  /* thumb 주변에 흰색 경계선 */
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);  /* 부드러운 그림자 효과 */
+  transition: background-color 0.3s ease, transform 0.3s ease;  /* 부드러운 변환 효과 */
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: #649e8d;  /* hover 시 색상 변화: 조금 어두운 녹색 */
+  transform: scale(1.1);  /* hover 시 크기 살짝 확대 */
+}
+
+.scroll-container::-webkit-scrollbar-button {
+  display: none;
 }
 
 .scroll-section {
