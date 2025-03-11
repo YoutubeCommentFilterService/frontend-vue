@@ -35,7 +35,7 @@ jobs:
           key: ${{ secrets.SSH_PRIV_KEY }}
           port: ${{ secrets.SSH_PORT }}
           source: ./dist/
-          target: ~/dist
+          target: ~/
 
           
       - name: Deploy to Nginx Server
