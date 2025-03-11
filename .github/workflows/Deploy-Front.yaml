@@ -18,7 +18,8 @@ jobs:
       - name: Install bun
         run: |
           curl -fsSL https://bun.sh/install | bash
-          ls
+          source ~/.bashrc
+          ls -a ~
           export BUN_INSTALL=/home/runner/.bun
 
       - name: Setup VITE env variables
