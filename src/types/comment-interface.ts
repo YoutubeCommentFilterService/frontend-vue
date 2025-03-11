@@ -1,7 +1,9 @@
 interface CommentResource {
     id: string;
+    profileImage: string;
     comment: string;
     nickname: string;
+    isTopLevel: boolean;
     commentPredict: string;
     nicknamePredict: string;
     nicknameProb: number[];
@@ -18,4 +20,9 @@ interface CommentResponseData {
     items: CommentResource[];
 }
 
-export type { CommentResource, CommentResponseData, PredictCategory };
+interface CommentDeleteRequestData {
+    justDeleteComments?: string;
+    authorBanComments?: string;
+}
+
+export type { CommentResource, CommentResponseData, PredictCategory, CommentDeleteRequestData };
