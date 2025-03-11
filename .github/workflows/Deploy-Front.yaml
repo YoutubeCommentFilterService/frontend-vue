@@ -1,9 +1,11 @@
 name: Deploy Static Frontend Buildedfile To Nginx Server
 
 on:
-  merged:
-    branch:
+  pull_request:
+    branches:
       - for-deploy
+    types:
+      - closed
 
 jobs:
   deploy:
@@ -13,17 +15,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 		
-	  - name: Install bun
-		run: |
-			curl -fsSL https://bun.sh/install | bash
-			export BUN_INSTALL=/home/runner/.bun
-	
-	  - name: Setup VITE env variables
-		run: |
+      - name: Install bun
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          export BUN_INSTALL=/home/runner/.bun
+	  
+      - name: Setup VITE env variables
+        run: |
           echo "VITE_BACKEND_URL=$VITE_BACKEND_URL" >> .env
 
-	  - name: Display None Toxic .env content
-		run: |
+      - name: Display None Toxic .env content
+        run: |
           cat .env
 
       - name: Install dependencies and build with Bun
@@ -32,11 +34,13 @@ jobs:
           $BUN_INSTALL/bin/bun build     # Build the project
 
       - name: Deploy to Nginx Server
-        uses: appleboy/ssh-action@v0.1.0
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
-		  username: ${{ secrets.SSH_USERNAME }}
-		  key: ${{ secrets.SSH_PRIV_KEY }}
-		  port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIV_KEY }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
-			. test.sh
+            whoami
+            bash test.sh
+     
