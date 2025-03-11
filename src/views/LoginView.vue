@@ -11,7 +11,7 @@
 <script setup lang="ts">
   import GoogleLoginIcon from '../components/icons/web_light_sq_ctn.svg';
   const handleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_BACKEND_URLerUrl}/oauth2/authorize/google`
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/oauth2/authorize/google`
   }
 </script>
 
