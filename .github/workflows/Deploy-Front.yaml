@@ -28,7 +28,7 @@ jobs:
           bun run build
 
       - name: Copy File to Nginx Server
-        uses: appleboy/ssh-action@master
+        uses: appleboy/scp-action@master
         with: 
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
