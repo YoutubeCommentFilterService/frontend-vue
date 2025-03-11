@@ -16,27 +16,16 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install bun
-        run: |
-          curl -fsSL https://bun.sh/install | bash
-          source ~/.bashrc
-          ls -a ~
-          export BUN_INSTALL=/home/runner/.bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Setup VITE env variables
         run: |
-          echo "VITE_BACKEND_URL=$VITE_BACKEND_URL" >> .env
+          echo "VITE_BACKEND_URL=${{ vars.VITE_BACKEND_URL }}" >> .env
 
-      - name: Display None Toxic .env content
+      - name: Install Dependencies and Build with Bun
         run: |
-          cat .env
-
-      - name: Install dependencies and build with Bun
-        run: |
-          echo $BUN_INSTALL
-          echo $BUN_INSTALL/bin/bun
-          bun i   # Install dependencies with bun
+          bun i
           bun run build
-          # $BUN_INSTALL/bin/bun build     # Build the project
 
       - name: Deploy to Nginx Server
         uses: appleboy/ssh-action@master
