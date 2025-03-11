@@ -21,6 +21,7 @@ jobs:
       - name: Setup VITE env variables
         run: |
           echo "VITE_BACKEND_URL=${{ vars.VITE_BACKEND_URL }}" >> .env
+          ls
 
       - name: Install Dependencies and Build with Bun
         run: |
