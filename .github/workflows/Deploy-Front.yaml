@@ -32,8 +32,11 @@ jobs:
 
       - name: Install dependencies and build with Bun
         run: |
-          $BUN_INSTALL/bin/bun install   # Install dependencies with bun
-          $BUN_INSTALL/bin/bun build     # Build the project
+          echo $BUN_INSTALL
+          echo $BUN_INSTALL/bin/bun
+          bun i   # Install dependencies with bun
+          bun run build
+          # $BUN_INSTALL/bin/bun build     # Build the project
 
       - name: Deploy to Nginx Server
         uses: appleboy/ssh-action@master
