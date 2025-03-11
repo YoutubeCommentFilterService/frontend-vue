@@ -27,8 +27,8 @@ const generatePTageTitle = (category: string[], prob: number[]): string => {
     return category.map((cat, idx) => `${cat}: ${String(Math.round(prob[idx] * 100)).padStart(3, ' ')}%`).join(',')
 }
 
-const fetchComments = async (page: number, take: number = 100) => {
-    if (!isLast.value) {
+const fetchComments = async (page: number, take: number = 100, isLast: boolean = false) => {
+    if (!isLast) {
         const response = await tokenAxiosInstance.get<CommentResponseData>(`/api/youtube/videos/${state.video.id}`, {
             params: {
                 page, take
@@ -42,7 +42,7 @@ const fetchComments = async (page: number, take: number = 100) => {
 const maxFetchNum = 100;
 const loadMoreItem = async () => {
     try {
-        const data = await fetchComments(pageNum.value, maxFetchNum)
+        const data = await fetchComments(pageNum.value, maxFetchNum, isLast.value)
 
         if (data) {
             isLast.value = data.isLast === 'Y' ? true : false;
@@ -60,11 +60,11 @@ const loadMoreItem = async () => {
 
 const refreshItem = async () => {
     try {
-        const data = await fetchComments(0, maxFetchNum);
+        const data = await fetchComments(1, maxFetchNum, false);
         if (data) {
             isLast.value = data.isLast === 'Y' ? true : false;
             commentItems.value = [...data.items];
-            pageNum.value = 1;
+            pageNum.value = 2;
             filteredItems.value = commentItems.value;
         }
     } catch (err) {
