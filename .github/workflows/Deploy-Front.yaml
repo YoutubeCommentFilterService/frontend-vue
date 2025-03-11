@@ -36,7 +36,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: ./dist/
           target: ~/
-
           
       - name: Deploy to Nginx Server
         uses: appleboy/ssh-action@master
@@ -47,5 +46,5 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             whoami
-            bash test.sh
+            . deploy-front.sh
      
