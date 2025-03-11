@@ -1,4 +1,4 @@
-import { useAuthStore, LOCAL_STORAGE_REFRESH_TOKEN } from "./auth";
+import { useAuthStore } from "./auth";
 import { useVideoStore } from "./video";
 
-export default { useAuthStore, LOCAL_STORAGE_REFRESH_TOKEN, useVideoStore };
+export default { useAuthStore, useVideoStore };
