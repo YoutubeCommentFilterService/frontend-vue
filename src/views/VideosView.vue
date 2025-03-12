@@ -11,6 +11,12 @@ const router = useRouter()
 const authStore = useAuthStore()
 const videoStore = useVideoStore()
 
+const videoPrivacyTooltip: {[key: string]: string | undefined} = {
+  private: "비공개 영상은 댓글 조회가 불가합니다 ㅠㅠ",
+  public: undefined,
+  unlisted: "링크 공개 영상은 댓글 조회가 가능합니다!"
+}
+
 const onVideoClick = (video: VideoResource) => {
   if (video.privacy === "private") return;
   router.push({
@@ -106,6 +112,7 @@ onMounted(() => {
           class="item"
           :class="{private: item.privacy === 'private', unlisted: item.privacy === 'unlisted'}"
           @click="item.privacy !== 'private' && onVideoClick(item)"
+          :title="videoPrivacyTooltip[item.privacy]"
         >
           <div class="image-container">
             <img :src="item.thumbnail" />
@@ -155,7 +162,6 @@ onMounted(() => {
 
 .item.private {
   cursor: not-allowed;
-  pointer-events: none;
 }
 
 .item:hover {
