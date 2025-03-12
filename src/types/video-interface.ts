@@ -4,6 +4,7 @@ interface VideoResource {
     thumbnail: string;
     publishedAt: string;
     description: string;
+    privacy: string;
 }
 
 interface VideoResponseData {

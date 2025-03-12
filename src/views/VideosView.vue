@@ -12,6 +12,7 @@ const authStore = useAuthStore()
 const videoStore = useVideoStore()
 
 const onVideoClick = (video: VideoResource) => {
+  if (video.privacy === "private") return;
   router.push({
     path: '/comments',
     state: {
@@ -27,28 +28,26 @@ const onVideoClick = (video: VideoResource) => {
 }
 
 const fetchVideos = async (page: number, take: number = 50): Promise<VideoResponseData | void> => {
+  console.log(page, take)
   if (!videoStore.isLast) {
-    const response = await tokenAxiosInstance.get<VideoResponseData>('/api/youtube/videos', {
+    const { data } = await tokenAxiosInstance.get<VideoResponseData>('/api/youtube/videos', {
       params: {
         page,
         take,
       },
     })
-    return response.data
+    console.log(data)
+    return data
   }
   return
 }
 
 const refreshVideos = async (take: number = 50): Promise<VideoResponseData | void> => {
-  const response = await tokenAxiosInstance.get<VideoResponseData>('/api/youtube/videos', {
-    params: {
-      page: 1,
-      take,
-    },
-  })
+  videoStore.isLast = false
+  const data = await fetchVideos(1, take);
 
   videoStore.flush()
-  videoStore.push(response.data)
+  if (data) videoStore.push(data)
 }
 
 const sleep = async (time: number) => {
@@ -105,9 +104,22 @@ onMounted(() => {
           v-for="item in videoStore.videoList"
           :key="item.id"
           class="item"
-          @click="() => onVideoClick(item)"
+          :class="{private: item.privacy === 'private', unlisted: item.privacy === 'unlisted'}"
+          @click="item.privacy !== 'private' && onVideoClick(item)"
         >
-          <img :src="item.thumbnail" />
+          <div class="image-container">
+            <img :src="item.thumbnail" />
+            <div v-if="item.privacy === 'private'" class="lock-overlay">
+              <svg width="80px" height="80px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="cls-1" d="M16 8.00169L16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7V8.00169M16 8.00169C15.7563 8 15.4907 8 15.2 8H8.8C8.50929 8 8.24373 8 8 8.00169M16 8.00169C17.1649 8.00979 17.8313 8.05658 18.362 8.32698C18.9265 8.6146 19.3854 9.07354 19.673 9.63803C20 10.2798 20 11.1198 20 12.8V16.2C20 17.8802 20 18.7202 19.673 19.362C19.3854 19.9265 18.9265 20.3854 18.362 20.673C17.7202 21 16.8802 21 15.2 21H8.8C7.11984 21 6.27976 21 5.63803 20.673C5.07354 20.3854 4.6146 19.9265 4.32698 19.362C4 18.7202 4 17.8802 4 16.2V12.8C4 11.1198 4 10.2798 4.32698 9.63803C4.6146 9.07354 5.07354 8.6146 5.63803 8.32698C6.16873 8.05658 6.83507 8.00979 8 8.00169M10 11V18M14 11V18M8.5 12.5H15.5M8.5 16.5H15.5" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div v-if="item.privacy === 'unlisted'" class="unlisted-overlay">
+              <svg width="30px" height="30px" viewBox="0 -1 510 515" xmlns="http://www.w3.org/2000/svg">
+                <path d="M476.335 35.664v.001c47.554 47.552 47.552 125.365.002 172.918l-101.729 101.73c-60.027 60.025-162.073 42.413-194.762-32.45 35.888-31.191 53.387-21.102 87.58-6.638 20.128 8.512 43.74 3.955 60.08-12.387l99.375-99.371c21.49-21.493 21.492-56.662 0-78.155-21.489-21.488-56.677-21.472-78.151 0l-71.278 71.28c-23.583-11.337-50.118-14.697-75.453-10.07a121.476 121.476 0 0118.767-24.207l82.651-82.65c47.554-47.551 125.365-47.555 172.918-.001zM35.664 476.334l.001.001c47.554 47.552 125.365 47.552 172.917 0l85.682-85.682a121.496 121.496 0 0019.325-25.157c-27.876 6.951-57.764 4.015-83.932-8.805l-70.192 70.19c-21.472 21.471-56.658 21.492-78.149 0-21.492-21.491-21.493-56.658 0-78.149l99.375-99.376c20.363-20.363 61.002-26.435 91.717 1.688 29.729-3.133 41.275-8.812 59.742-26.493-39.398-69.476-137.607-80.013-194.757-22.863L35.664 303.417c-47.552 47.553-47.552 125.364 0 172.917z"/>
+              </svg>
+            </div>
+          </div>
           <p class="title">{{ item.title }}</p>
           <p class="meta">업로드 일자: {{ convertUTC2KST(item.publishedAt) }}</p>
         </div>
@@ -141,6 +153,11 @@ onMounted(() => {
   cursor: pointer;
 }
 
+.item.private {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .item:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -168,5 +185,33 @@ onMounted(() => {
   margin: 0 12px 12px;
   font-size: 12px;
   color: #888;
+}
+
+.image-container {
+  position: relative;
+}
+
+.lock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.unlisted-overlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
+
+svg {
+  filter: drop-shadow(0px 0px 2px rgba(255, 255, 255));
 }
 </style>
