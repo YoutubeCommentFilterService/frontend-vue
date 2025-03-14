@@ -13,6 +13,7 @@ import { tokenAxiosInstance, LOCAL_STORAGE_REFRESH_TOKEN } from './utils'
 import { onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useVideoStore } from './stores/video'
+import type { UserProfile } from './types/after-login-interface'
 
 const authStore = useAuthStore()
 const videoStore = useVideoStore()
@@ -20,10 +21,9 @@ const videoStore = useVideoStore()
 onMounted(() => {
   const refreshToken: string | null = localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN)
   if (refreshToken) {
-    tokenAxiosInstance
-      .post('/api/member/renew-token', { refreshToken })
-      .then(() => {
-        authStore.login()
+    tokenAxiosInstance.post<UserProfile>('/api/member/renew-token', { refreshToken })
+      .then(({data}) => {
+        authStore.login(data)
       })
       .then(() => {
         videoStore.restore()
