@@ -4,12 +4,16 @@
       <div class="header-left"></div>
       <h1 class="title">title</h1>
       <div class="header-right">
-        <div v-if="authStore.isLoggedIn">
-          <i class="pi pi-user user-menu-icon" @click="handleClickUserMenu"></i>
+        <div v-if="authStore.isLoggedIn" style="display: flex; align-items: center;">
+          <img :src="authStore.profile.profileImage" @click="handleClickUserMenu" class="profile-image">
           <div v-show="isUserMenuVisible" ref="userMenu" class="user-menu" @click.stop>
-            <div @click="reloginGoogle"><i class="pi pi-sync"></i> 구글 재연동</div>
-            <div @click="logout"><i class="pi pi-sign-out"></i> 로그아웃</div>
-            <div @click="withdrawService"><i class="pi pi-user-minus"></i> 회원탈퇴</div>
+            <div class="user-info">
+              <img :src="authStore.profile.profileImage" class="profile-image">
+              <p>{{ authStore.profile.nickname }}</p>
+            </div>
+            <div @click="reloginGoogle" class="menu-hover"><i class="pi pi-sync"></i> 구글 재연동</div>
+            <div @click="logout" class="menu-hover"><i class="pi pi-sign-out"></i> 로그아웃</div>
+            <div @click="withdrawService" class="menu-hover"><i class="pi pi-user-minus"></i> 회원탈퇴</div>
           </div>
         </div>
         <RouterLink v-else to="login" class="pi pi-sign-in"></RouterLink>
@@ -42,7 +46,7 @@ const reloginGoogle = () => {
 
 const withdrawService = async () => {
     try {
-        await tokenAxiosInstance.delete("/member");
+        await tokenAxiosInstance.delete("/api/member");
         await logout();
     } catch (err) {
         console.log(err);
@@ -127,8 +131,9 @@ onUnmounted(() => {
 
 .user-menu {
   position: absolute;
+  width: 260px;
   top: 30px;
-  right: 0;
+  right: 30px;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -138,11 +143,38 @@ onUnmounted(() => {
   z-index: 1000;  /* 메뉴가 다른 요소들 위에 떠서 표시되도록 설정 */
 }
 
-.user-menu div {
+.user-menu .menu-hover {
   padding: 8px 0;
   cursor: pointer;
 }
-.user-menu div:hover {
+.user-menu .menu-hover:hover {
   background-color: #f4f4f4;  /* 메뉴 항목에 마우스 오버 시 배경색 변경 */
+}
+
+.profile-image {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  user-select: none;
+}
+
+.user-info {
+  display:flex;
+  flex-direction: row;
+  border-bottom: 1px solid gray;
+  pointer-events: none;
+  user-select: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-info > p {
+  margin-left: 10px;
+  font-size: 0.6em;
+  
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
 }
 </style>
