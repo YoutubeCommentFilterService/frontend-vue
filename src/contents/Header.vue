@@ -1,31 +1,39 @@
 <template>
-  <header class="header">
-    <div class="header-top">
-      <div class="header-left"></div>
-      <h1 class="title">title</h1>
-      <div class="header-right">
-        <div v-if="authStore.isLoggedIn" style="display: flex; align-items: center;">
-          <img :src="authStore.profile.profileImage" @click="handleClickUserMenu" class="profile-image">
-          <div v-show="isUserMenuVisible" ref="userMenu" class="user-menu" @click.stop>
-            <div class="user-info">
-              <img :src="authStore.profile.profileImage" class="profile-image">
-              <p>{{ authStore.profile.nickname }}</p>
+  <header class="bg-white shadow-md w-full">
+    <div class="flex justify-between items-center px-8 py-4 border-b">
+      <!-- 왼쪽: 타이틀 -->
+      <h1 class="text-3xl font-bold text-gray-900 tracking-tight">title</h1>
+
+      <!-- 오른쪽: 네비게이션 -->
+      <nav class="flex items-center gap-8">
+        <RouterLink to="/" class="nav-item">Home</RouterLink>
+        <RouterLink to="/videos" class="nav-item">Spams</RouterLink>
+        <RouterLink to="/recent" class="nav-item">최근 댓글</RouterLink>
+
+        <!-- 로그인 버튼 -->
+        <div class="flex ml-6 bg-purple-600 w-10 h-10 justify-center align-center rounded-lg">
+          <RouterLink v-if="!authStore.isLoggedIn" to="login"
+                      class="login-btn flex items-center justify-center">
+            <i class="pi pi-sign-in text-white text-lg"></i>
+          </RouterLink>
+
+          <div v-else class="relative">
+            <img :src="authStore.profile.profileImage" @click="handleClickUserMenu"
+                 class="w-12 h-12 rounded-full cursor-pointer border-2 border-gray-300 hover:border-purple-500 transition-all">
+            <div v-show="isUserMenuVisible" ref="userMenu"
+                 class="absolute right-0 mt-2 w-56 bg-white shadow-xl rounded-xl overflow-hidden z-10">
+              <div class="flex items-center px-5 py-4 border-b">
+                <img :src="authStore.profile.profileImage" class="w-10 h-10 rounded-full">
+                <p class="ml-4 text-lg font-medium text-gray-800">{{ authStore.profile.nickname }}</p>
+              </div>
+              <div @click="reloginGoogle" class="menu-item"><i class="pi pi-sync"></i> 구글 재연동</div>
+              <div @click="logout" class="menu-item"><i class="pi pi-sign-out"></i> 로그아웃</div>
+              <div @click="withdrawService" class="menu-item text-red-500"><i class="pi pi-user-minus"></i> 회원탈퇴</div>
             </div>
-            <div @click="reloginGoogle" class="menu-hover"><i class="pi pi-sync"></i> 구글 재연동</div>
-            <div @click="logout" class="menu-hover"><i class="pi pi-sign-out"></i> 로그아웃</div>
-            <div @click="withdrawService" class="menu-hover"><i class="pi pi-user-minus"></i> 회원탈퇴</div>
           </div>
         </div>
-        <RouterLink v-else to="login" class="pi pi-sign-in"></RouterLink>
-      </div>
+      </nav>
     </div>
-    <nav class="navigation">
-      <div class="header-left"></div>
-      <RouterLink to="/" class="nav-item">Home</RouterLink>
-      <RouterLink to="/videos" class="nav-item">Spams</RouterLink>
-      <RouterLink to="/recent" class="nav-item">최근 댓글</RouterLink>
-      <div class="header-right"></div>
-    </nav>
   </header>
 </template>
 
@@ -84,97 +92,3 @@ onUnmounted(() => {
   window.addEventListener('click', handleClickOutside);
 })
 </script>
-
-<style scoped>
-.header {
-  width: 100%;
-  border-bottom: 1px solid #000;
-}
-
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #000;
-}
-
-.title {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.navigation {
-    justify-content: space-between;
-  padding: 1rem 2rem;
-  display: flex;
-  gap: 2rem;  /* 메뉴 항목 간 간격 */
-}
-
-.nav-item {
-  text-decoration: none;
-  color: #000;
-}
-
-.nav-item:hover {
-  text-decoration: underline;
-}
-
-.header-left, .header-right {
- margin: 0;
- font-size: 1.5rem;
-}
-
-.user-menu-icon:hover {
-  cursor: pointer;
-}
-
-.user-menu {
-  position: absolute;
-  width: 260px;
-  top: 30px;
-  right: 30px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);  /* 메뉴에 그림자 효과 추가 */
-  padding: 10px;
-  width: 200px;  /* 메뉴의 너비 설정 */
-  z-index: 1000;  /* 메뉴가 다른 요소들 위에 떠서 표시되도록 설정 */
-}
-
-.user-menu .menu-hover {
-  padding: 8px 0;
-  cursor: pointer;
-}
-.user-menu .menu-hover:hover {
-  background-color: #f4f4f4;  /* 메뉴 항목에 마우스 오버 시 배경색 변경 */
-}
-
-.profile-image {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  user-select: none;
-}
-
-.user-info {
-  display:flex;
-  flex-direction: row;
-  border-bottom: 1px solid gray;
-  pointer-events: none;
-  user-select: none;
-  justify-content: center;
-  align-items: center;
-}
-
-.user-info > p {
-  margin-left: 10px;
-  font-size: 0.6em;
-  
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex-grow: 1;
-}
-</style>

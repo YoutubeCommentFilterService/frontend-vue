@@ -40,28 +40,62 @@ const fetchComments = async () => {
 </script>
 
 <template>
-    <div>
-        <p>유튜브 댓글 중 스팸으로 간주된 댓글들을 삭제해주는 사이트입니다.</p>
-        <p></p>
-        <p>구글 로그인을 하고 spams 탭으로 이동하면 동영상 목록이 나옵니다.</p>
-        <p></p>
-        <p>해당 동영상에 들어가면 전체 댓글을 가져온 후 스팸 댓글으로 예상되는 댓글들을 가져옵니다.</p>
-        <p></p>
-        <p>이후 댓글을 선택하고 삭제 버튼을 누르면 댓글이 삭제됩니다!</p>
-        
-        <div>
-            <span >동영상 페이지: <input v-model="videoPage"></span>
-            <span >동영상 개수: <input v-model="videoTake"></span>
-            <br/>
-            <button @click="fetchVideos">동영상 로딩 테스트!</button>
+  <div class="flex flex-col items-center justify-center align-center min-h-screen p-8">
+    <div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-3xl mx-auto">
+      <h1 class="text-3xl font-bold text-center text-purple-600 mb-6">
+        유튜브 스팸 댓글 관리
+      </h1>
+      <p class="text-gray-600 text-center text-base leading-relaxed">
+        구글 로그인 후 <span class="font-semibold text-purple-500">spams</span> 탭에서 동영상을 선택하세요.
+        이후 스팸 댓글을 삭제할 수 있습니다.
+      </p>
+
+      <!-- 동영상 로딩 -->
+      <div class="bg-gray-100 p-6 rounded-xl shadow-md mt-8">
+        <h2 class="text-lg font-semibold text-gray-700 mb-4">동영상 로딩</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-gray-600">페이지</label>
+            <input v-model="videoPage" type="number"
+                   class="w-full px-4 py-2 bg-gray-100 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+          </div>
+          <div>
+            <label class="text-gray-600">개수</label>
+            <input v-model="videoTake" type="number"
+                   class="w-full px-4 py-2 bg-gray-100 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+          </div>
         </div>
-        <br/>
-        <div>
-            <span >비디오 ID: <input v-model="videoId"></span>
-            <span >댓글 페이지: <input v-model="commentPage"></span>
-            <span >댓글 개수: <input v-model="commentTake"></span>
-            <br/>
-            <button @click="fetchComments">댓글 로딩 테스트!</button>
+        <button @click="fetchVideos"
+                class="mt-6 w-full bg-purple-600 text-white font-semibold py-3 rounded-lg hover:bg-purple-700 transition">
+          동영상 불러오기
+        </button>
+      </div>
+
+      <!-- 댓글 로딩 -->
+      <div class="bg-gray-100 p-6 rounded-xl shadow-md mt-8">
+        <h2 class="text-lg font-semibold text-gray-700 mb-4">댓글 로딩</h2>
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="text-gray-600">비디오 ID</label>
+            <input v-model="videoId" type="text"
+                   class="w-full px-4 py-2 bg-gray-100 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+          </div>
+          <div>
+            <label class="text-gray-600">페이지</label>
+            <input v-model="commentPage" type="number"
+                   class="w-full px-4 py-2 bg-gray-100 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+          </div>
+          <div>
+            <label class="text-gray-600">개수</label>
+            <input v-model="commentTake" type="number"
+                   class="w-full px-4 py-2 bg-gray-100 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+          </div>
         </div>
+        <button @click="fetchComments"
+                class="mt-6 w-full bg-purple-600 text-white font-semibold py-3 rounded-lg hover:bg-purple-700 transition">
+          댓글 불러오기
+        </button>
+      </div>
     </div>
+  </div>
 </template>

@@ -1,54 +1,23 @@
 <template>
-  <div class="page">
-    <div class="login-container">
-      <h1>Login</h1>
-      <p ></p>
-      <img class="google" :src="GoogleLoginIcon" alt="구글 로그인" @click="handleLogin">
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="bg-white shadow-lg rounded-2xl p-10 w-full max-w-md text-center">
+      <h1 class="text-3xl font-bold text-gray-900">로그인</h1>
+      <p class="text-gray-500 mt-2">Google 계정으로 간편하게 로그인하세요</p>
+
+      <button
+        @click="handleLogin"
+        class="mt-6 flex items-center justify-center gap-3 bg-purple-600 text-white px-6 py-3 rounded-xl w-full shadow-md transition-all hover:bg-white hover:text-purple-600 hover:border hover:border-purple-600"
+      >
+        <img :src="GoogleLoginIcon" alt="구글 로그인" class="w-6 h-6">
+        <span class="text-lg font-semibold">Google 로그인</span>
+      </button>
     </div>
   </div>
 </template>
-  
+
 <script setup lang="ts">
   import GoogleLoginIcon from '../components/icons/web_light_sq_ctn.svg';
   const handleLogin = () => {
     window.location.href = `${import.meta.env.VITE_BACKEND_URL}/oauth2/authorize/google`
   }
 </script>
-
-<style scoped>
-.page {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.login-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 2rem;
-}
-
-button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  color: white;
-  background-color: #007bff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-.google:hover {
-  cursor: pointer;
-}
-</style>

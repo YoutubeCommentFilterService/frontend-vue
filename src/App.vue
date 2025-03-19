@@ -55,6 +55,9 @@ body {
   display: flex;
   flex-grow: 1;
   overflow: hidden;
+
+  justify-content: center;
+  align-content: center;
 }
 
 a {
