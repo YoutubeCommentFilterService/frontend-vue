@@ -41,7 +41,7 @@ const videoStore = useVideoStore();
 const router = useRouter();
 
 const reloginGoogle = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorize/google";
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/oauth2/authorize/google`;
 }
 
 const withdrawService = async () => {
