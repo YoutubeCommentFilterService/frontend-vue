@@ -7,4 +7,8 @@ interface UserProfile {
     profileImage: string;
 }
 
-export type { AfterLoginDto, UserProfile };
+interface IsNewMember {
+    isNewMember: boolean;
+}
+
+export type { AfterLoginDto, UserProfile, IsNewMember };
