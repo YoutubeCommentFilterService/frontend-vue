@@ -1,7 +1,8 @@
 <template>
-  <div id="app">
+  <div id="app" class="h-screen flex flex-col">
     <Header />
-    <main class="main-content">
+    <!-- main-content  -->
+    <main class="flex-grow flex overflow-y-auto">
       <RouterView />
     </main>
   </div>
@@ -9,11 +10,11 @@
 
 <script setup lang="ts">
 import Header from '@/contents/Header.vue'
-import { tokenAxiosInstance, LOCAL_STORAGE_REFRESH_TOKEN } from './utils'
-import { onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
+import { tokenAxiosInstance, LOCAL_STORAGE_REFRESH_TOKEN } from '@/utils'
+import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { useVideoStore } from './stores/video'
-import type { UserProfile } from './types/after-login-interface'
+import { useVideoStore } from '@/stores/video'
+import type { UserProfile } from '@/types/after-login-interface'
 
 const authStore = useAuthStore()
 const videoStore = useVideoStore()
@@ -44,21 +45,6 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-}
-
-#app {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.main-content {
-  display: flex;
-  flex-grow: 1;
-  overflow: hidden;
-
-  justify-content: center;
-  align-content: center;
 }
 
 a {
