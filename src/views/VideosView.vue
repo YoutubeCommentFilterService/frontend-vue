@@ -34,7 +34,6 @@ const onVideoClick = (video: VideoResource) => {
 }
 
 const fetchVideos = async (page: number, take: number = 50): Promise<VideoResponseData | void> => {
-  console.log(page, take)
   if (!videoStore.isLast) {
     const { data } = await tokenAxiosInstance.get<VideoResponseData>('/api/youtube/videos', {
       params: {
@@ -42,7 +41,6 @@ const fetchVideos = async (page: number, take: number = 50): Promise<VideoRespon
         take,
       },
     })
-    console.log(data)
     return data
   }
   return
