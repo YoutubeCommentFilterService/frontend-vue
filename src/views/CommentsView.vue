@@ -45,11 +45,16 @@ const loadMoreItem = async () => {
         const data = await fetchComments(pageNum.value, maxFetchNum, isLast.value)
 
         if (data) {
-            isLast.value = data.isLast === 'Y' ? true : false;
-            commentItems.value = [...commentItems.value, ...data.items];
-            pageNum.value += 1
-            filteredItems.value = commentItems.value
-            return true;
+            if (data.predictCommonResponse.code < 400) {
+                isLast.value = data.isLast === 'Y' ? true : false;
+                commentItems.value = [...commentItems.value, ...data.items];
+                pageNum.value += 1
+                filteredItems.value = commentItems.value
+                return true;
+            } else {
+                isLast.value = true;
+                return true;
+            }
         }
         return false
     } catch (err) {
@@ -203,7 +208,7 @@ onMounted(async () => {
         >
             <div class="scroll-top-section">
                 <div class="categories-container">
-                    <div v-if="nicknameCategories.length" class="category-section">
+                    <div v-if="nicknameCategories?.length" class="category-section">
                         <div class="category-label">닉네임</div>
                         <div class="category-buttons">
                             <button 
@@ -217,7 +222,7 @@ onMounted(async () => {
                         </div>
                     </div>
                     <div class="category-section-spacer"></div>
-                    <div v-if="commentCategories.length" class="category-section">
+                    <div v-if="commentCategories?.length" class="category-section">
                         <div class="category-label">댓글</div>
                         <div class="category-buttons">
                             <button 
@@ -247,18 +252,23 @@ onMounted(async () => {
                     </span>
                 </div>
             </div>
-            <div v-if="filteredItems.length > 0">
-                <div v-for="item in filteredItems" 
-                    :key="item.id" 
-                    class="item"
-                    :class="{ 'item-selected': selectedCommentIds.includes(item.id), 'reply-comment': !item.isTopLevel }"
-                    @click="toggleItemSelection(item.id)"
-                >
-                    <img :src="item.profileImage" width="75px" height="75px">
-                    <div class="text-container">
-                        <p :title="generatePTageTitle(nicknameCategories, item.nicknameProb)" class="tooltip-container"> {{ item.nickname }}({{ item.nicknamePredict }})</p>
-                        <p :title="generatePTageTitle(commentCategories, item.commentProb)" class="tooltip-container meta"> {{ item.comment }}({{ item.commentPredict }})</p>
+            <div style="display:flex;">
+                <div v-if="filteredItems.length > 0">
+                    <div v-for="item in filteredItems" 
+                        :key="item.id" 
+                        class="item"
+                        :class="{ 'item-selected': selectedCommentIds.includes(item.id), 'reply-comment': !item.isTopLevel }"
+                        @click="toggleItemSelection(item.id)"
+                    >
+                        <img :src="item.profileImage" width="75px" height="75px">
+                        <div class="text-container">
+                            <p :title="generatePTageTitle(nicknameCategories, item.nicknameProb)" class="tooltip-container"> {{ item.nickname }}({{ item.nicknamePredict }})</p>
+                            <p :title="generatePTageTitle(commentCategories, item.commentProb)" class="tooltip-container meta"> {{ item.comment }}({{ item.commentPredict }})</p>
+                        </div>
                     </div>
+                </div>
+                <div v-if="isLast && filteredItems.length === 0" style="display: flex; align-items: center; flex-grow: 1;">
+                    <p>댓글이 존재하지 않습니다</p>
                 </div>
             </div>
         </InfiniteScroll>

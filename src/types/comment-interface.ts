@@ -13,11 +13,13 @@ interface CommentResource {
 interface PredictCategory {
     commentCategories: string[];
     nicknameCategories: string[];
+    predictCommonResponse: {code: number; message: string;};
 }
 
 interface CommentResponseData {
     isLast: string;
     items: CommentResource[];
+    predictCommonResponse: {code: number; message: string;};
 }
 
 interface CommentDeleteRequestData {
