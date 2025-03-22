@@ -163,7 +163,6 @@ onMounted(async () => {
 })
 
 const submitConsent = async () => {
-  console.log('submit!')
   await tokenAxiosInstance
     .post<AfterLoginDto>('/api/member/accept-signin')
     .then((res) => res.data)
