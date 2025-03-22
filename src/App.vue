@@ -21,8 +21,9 @@ const videoStore = useVideoStore()
 onMounted(() => {
   const refreshToken: string | null = localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN)
   if (refreshToken) {
-    tokenAxiosInstance.post<UserProfile>('/api/member/renew-token', { refreshToken })
-      .then(({data}) => {
+    tokenAxiosInstance
+      .post<UserProfile>('/api/member/refresh-auth', { refreshToken })
+      .then(({ data }) => {
         authStore.login(data)
       })
       .then(() => {
