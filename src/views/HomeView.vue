@@ -428,21 +428,5 @@
         </div>
       </div>
     </section>
-
-    <!-- 푸터 -->
-    <footer class="py-10 mt-12 border-t border-gray-200 bg-gray-50">
-      <div class="max-w-4xl mx-auto text-center">
-        <p class="text-gray-600 mb-6">
-          문의사항이 있다면
-          <a href="mailto:gkstkdgus821@gmail.com" class="text-red-600 hover:text-red-700"
-            >gkstkdgus821@gmail.com</a
-          >
-          으로 연락 바랍니다!
-        </p>
-        <div class="mt-6 pt-6 border-t border-gray-200 text-gray-500">
-          <p>&copy; 2025 유튜브 스팸 댓글 제거. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
   </div>
 </template>

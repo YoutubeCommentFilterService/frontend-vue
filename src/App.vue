@@ -5,6 +5,31 @@
     <main class="flex-grow flex overflow-y-auto">
       <RouterView />
     </main>
+
+    <!-- 푸터 -->
+    <footer class="py-2 border-t border-gray-200 bg-gray-50 flex-shrink-0">
+      <div class="max-w-4xl mx-auto text-center">
+        <div class="flex flex-col md:flex-row justify-center items-center">
+          <div class="flex space-x-6 mb-4 md:mb-0">
+            <router-link
+              to="/privacy-google"
+              class="text-gray-600 hover:text-gray-900 hover:underline text-sm"
+            >
+              개인정보 이용
+            </router-link>
+            <a
+              href="mailto:gkstkdgus821@gmail.com"
+              class="text-gray-600 hover:text-gray-900 hover:underline text-sm"
+            >
+              문의하기
+            </a>
+          </div>
+        </div>
+        <div class="text-gray-500 text-sm">
+          <p>&copy; 2025 유튜브 스팸 댓글 제거. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -37,19 +62,3 @@ onMounted(() => {
   })
 })
 </script>
-
-<style>
-/* 전역 리셋 */
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-  font-size: 1.5rem;
-}
-</style>
