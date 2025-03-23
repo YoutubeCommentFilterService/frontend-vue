@@ -1,7 +1,10 @@
 <template>
-  <div style="display: flex; overflow-y: auto; flex-grow: 1">
-    <p v-if="!isNewMember">로그인 중입니다...</p>
-    <div v-if="isNewMember" class="privacy-consent-form">
+  <div class="flex overflow-y-auto flex-grow justify-center">
+    <p v-if="!isNewMember" class="flex items-center">
+      로그인 중입니다...
+      <span class="ml-2 w-8 h-8 border-4 border-t-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></span>
+    </p>
+    <div v-else class="max-w-800 p-20 leading-relaxed font-Pretendatd">
       <h1>개인정보 수집 및 이용 동의서</h1>
 
       <section class="consent-section">
@@ -106,7 +109,7 @@
         </p>
       </section>
 
-      <div class="buttons-container">
+      <div class="flex justify-center gap-5 mt-7 mb-7 pb-12">
         <button class="reject-button" @click="rejectConsent">거부</button>
         <button class="submit-button" @click="submitConsent">동의</button>
       </div>
@@ -144,22 +147,14 @@ const toggleInfo = (infoType: string) => {
 }
 
 onMounted(async () => {
-  tokenAxiosInstance
-    .get<IsNewMember>('/api/member/check-new', {
-      timeout: 1000,
-    })
-    .then((res) => res.data)
-    .then(async (data) => {
-      if (data.isNewMember === true) {
-        isNewMember.value = data.isNewMember
-      } else {
-        await getRefreshToken()
-      }
-    })
-    .catch(() => {
-      // TODO: 추후 home으로 이동
-      isNewMember.value = true
-    })
+  try {
+    const {data} = await tokenAxiosInstance.get<IsNewMember>('/api/member/check-new', { timeout: 1000 })
+    if (data.isNewMember === true) isNewMember.value = data.isNewMember
+    else await getRefreshToken()
+  } catch (e) {
+     // TODO: 추후 home으로 이동
+    isNewMember.value = true
+  } 
 })
 
 const submitConsent = async () => {
@@ -251,14 +246,6 @@ h2 {
 
 ul {
   padding-left: 20px;
-}
-
-.buttons-container {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 30px;
-  margin-bottom: 30px;
 }
 
 .submit-button,
