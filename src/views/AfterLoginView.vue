@@ -2,13 +2,25 @@
   <div class="flex overflow-y-auto flex-grow justify-center">
     <p v-if="!isNewMember" class="flex items-center">
       로그인 중입니다...
-      <span class="ml-2 w-8 h-8 border-4 border-t-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></span>
+      <span
+        class="ml-2 w-8 h-8 border-4 border-t-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"
+      ></span>
     </p>
     <div v-else>
       <ConcenredPrivacyGoogle />
       <div class="flex justify-center gap-5 mt-7 mb-7 pb-12">
-        <button class="reject-button" @click="rejectConsent">거부</button>
-        <button class="submit-button" @click="submitConsent">동의</button>
+        <button
+          class="px-5 py-2.5 border-none rounded text-[16px] cursor-pointer bg-red-500 text-white"
+          @click="rejectConsent"
+        >
+          거부
+        </button>
+        <button
+          class="px-5 py-2.5 border-none rounded text-[16px] cursor-pointer bg-green-500 text-white"
+          @click="submitConsent"
+        >
+          동의
+        </button>
       </div>
     </div>
   </div>
@@ -29,13 +41,15 @@ const isNewMember = ref<boolean>(false)
 
 onMounted(async () => {
   try {
-    const {data} = await tokenAxiosInstance.get<IsNewMember>('/api/member/check-new', { timeout: 1000 })
+    const { data } = await tokenAxiosInstance.get<IsNewMember>('/api/member/check-new', {
+      timeout: 1000,
+    })
     if (data.isNewMember === true) isNewMember.value = data.isNewMember
     else await getRefreshToken()
   } catch (e) {
-     // TODO: 추후 home으로 이동
+    // TODO: 추후 home으로 이동
     isNewMember.value = true
-  } 
+  }
 })
 
 const submitConsent = async () => {
@@ -70,81 +84,3 @@ const getRefreshToken = async () => {
     .catch((err) => console.error(err))
 }
 </script>
-
-<style lang="css" scoped>
-.privacy-consent-form {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'Noto Sans KR', sans-serif;
-  line-height: 1.6;
-  margin-bottom: 3em;
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 24px;
-}
-
-h2 {
-  font-size: 18px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-}
-
-.consent-section {
-  margin-bottom: 20px;
-}
-
-.info-item {
-  margin-bottom: 15px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-}
-
-.info-header {
-  cursor: pointer;
-  padding: 5px;
-  font-size: 16px;
-  display: flex;
-  align-items: baseline;
-}
-
-.toggle-icon {
-  margin-right: 5px;
-  font-size: 12px;
-  color: #666;
-}
-
-.info-details {
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #f9f9f9;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-ul {
-  padding-left: 20px;
-}
-
-.submit-button,
-.reject-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.submit-button {
-  background-color: #4caf50;
-  color: white;
-}
-
-.reject-button {
-  background-color: #f44336;
-  color: white;
-}
-</style>
