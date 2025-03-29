@@ -67,7 +67,6 @@ const rejectConsent = async () => {
     .post<AfterLoginDto>('/api/member/reject-signin')
     .then((res) => res.data)
     .then((data) => {
-      console.log(data)
       router.push('/')
     })
 }
