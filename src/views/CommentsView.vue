@@ -22,6 +22,7 @@ const isLast = ref<boolean>(false)
 const nicknameCategories = ref<string[]>([])
 const commentCategories = ref<string[]>([])
 const pageNum = ref<number>(1)
+const isLoading = ref<boolean>(false)
 const selectedCategories = ref<{
   nickname: string[]
   comment: string[]
@@ -37,6 +38,7 @@ const generatePTageTitle = (category: string[], prob: number[]): string => {
 }
 
 const fetchComments = async (page: number, take: number = 100, isLast: boolean = false) => {
+  isLoading.value = true;
   if (!isLast) {
     const response = await tokenAxiosInstance.get<CommentResponseData>(
       `/api/youtube/videos/${state.video.id}`,
@@ -47,8 +49,10 @@ const fetchComments = async (page: number, take: number = 100, isLast: boolean =
         },
       },
     )
+    isLoading.value = false;
     return response.data
   }
+  isLoading.value = false;
   return
 }
 
@@ -235,7 +239,7 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <div class="flex flex-col w-full overflow-hidden">
+    <div class="flex flex-col w-full h-full overflow-hidden">
       <div class="sticky top-0 bg-white z-10 px-4 shadow-md rounded-b-lg">
         <div class="flex items-center flex-wrap gap-2 my-2 py-1.5 overflow-x-auto">
           <CategorySelector
@@ -286,7 +290,7 @@ onMounted(async () => {
         :refresh-item="refreshItem"
         spinner-text="댓글 목록을 불러오는 중입니다!!"
       >
-        <div class="flex">
+        <div class="flex h-full w-full">
           <div v-if="filteredItems.length > 0" class="flex-grow">
             <div
               v-for="item in filteredItems"
@@ -322,10 +326,10 @@ onMounted(async () => {
             </div>
           </div>
           <div
-            v-if="isLast && filteredItems.length === 0"
-            class="flex-grow justify-center items-center text-xl h-full text-[#7f8c8d] bg-[#ecf0f1] rounded-lg p-5 text-center"
+            v-if="!isLoading && isLast && filteredItems.length === 0"
+            class="flex flex-grow text-xl bg-[#ecf0f1] rounded-lg p-5 justify-center items-center"
           >
-            <p class="m-0 font-bold text-[#bdc3c7]">댓글이 존재하지 않습니다</p>
+            <div class="m-0 font-bold text-[#bdc3c7]">댓글이 존재하지 않습니다</div>
           </div>
         </div>
       </InfiniteScroll>
