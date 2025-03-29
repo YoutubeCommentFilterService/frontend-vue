@@ -104,7 +104,7 @@ onMounted(() => {
       :refresh-item="refreshItem"
       spinner-text="동영상을 불러오는 중입니다!!"
     >
-      <div class="grid grid-cols-[repeat(auto-fit,_minmax(400px,_1fr))] gap-4 p-5">
+      <div class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-4 p-5">
         <div
           v-for="item in videoStore.videoList"
           :key="item.id"
