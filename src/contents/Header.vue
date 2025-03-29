@@ -22,6 +22,10 @@
           >
             {{ link.name }}
           </RouterLink>
+          <div v-if="authStore.isLoggedIn" class="text-xs flex flex-col items-center select-none">
+            <span class="select-none">Youtube 연동</span>
+            <span class="select-none">{{ authStore.profile.hasYoutubeAccess ? '🟢' : '🔴' }}</span>
+          </div>
           <!-- 로그인 버튼 -->
           <div
             class="flex ml-4 w-10 h-10 items-center justify-center transition-all duration-200 hover:opacity-90"

@@ -5,6 +5,7 @@ interface AfterLoginDto extends UserProfile {
 interface UserProfile {
     nickname: string;
     profileImage: string;
+    hasYoutubeAccess: boolean;
 }
 
 interface IsNewMember {
