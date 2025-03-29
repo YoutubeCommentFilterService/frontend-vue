@@ -126,9 +126,9 @@ onUnmounted(() => {
       class="flex border border-gray-300 flex-col overflow-y-auto relative h-full w-full"
       ref="scrollContainer"
     >
-      <div class="pt-0 p-2.5 flex-grow">
+      <div class="p-2.5 flex-grow">
         <slot></slot>
-        <div v-if="isLoading" class="text-center p-5 flex flex-col items-center">
+        <div v-if="isLoading" class="text-center flex flex-col items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <div
             class="w-10 h-10 border-4 border-t-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mb-2.5"
           ></div>
