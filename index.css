@@ -1,5 +1,12 @@
 @import 'tailwindcss';
 
+/* 다크모드 적용 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* scrollbar 적용 */
+/* https://adoxography.github.io/tailwind-scrollbar/utilities */
+@plugin 'tailwind-scrollbar';
+
 * {
   font-family: 'Pretendard', sans-serif;
 }
@@ -13,4 +20,18 @@ body {
 
 a {
   text-decoration: none;
+}
+
+@layer base {
+  html,
+  body,
+  * {
+    @apply scrollbar-none;
+  }
+
+  html.dark,
+  .dark body,
+  .dark * {
+    @apply scrollbar-none;
+  }
 }
