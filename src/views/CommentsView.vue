@@ -38,7 +38,7 @@ const generatePTageTitle = (category: string[], prob: number[]): string => {
 }
 
 const fetchComments = async (page: number, take: number = 100, isLast: boolean = false) => {
-  isLoading.value = true;
+  isLoading.value = true
   if (!isLast) {
     const response = await tokenAxiosInstance.get<CommentResponseData>(
       `/api/youtube/videos/${state.video.id}`,
@@ -49,10 +49,10 @@ const fetchComments = async (page: number, take: number = 100, isLast: boolean =
         },
       },
     )
-    isLoading.value = false;
+    isLoading.value = false
     return response.data
   }
-  isLoading.value = false;
+  isLoading.value = false
   return
 }
 
@@ -227,7 +227,7 @@ onMounted(async () => {
 <template>
   <div class="flex flex-col w-full md:flex-row">
     <div
-      class="flex flex-row gap-5 p-5 border border-gray-300 rounded-lg bg-white md:flex-col md:w-[400px] md:flex-shrink-0 md:items-center md:text-left"
+      class="flex flex-row gap-5 p-5 md:flex-col md:w-[400px] md:flex-shrink-0 md:items-center md:text-left"
     >
       <img :src="state.video.thumbnail" class="flex w-[320px] h-auto object-cover rounded-lg" />
       <div class="flex flex-col overflow-hidden w-full">
@@ -240,7 +240,7 @@ onMounted(async () => {
       </div>
     </div>
     <div class="flex flex-col w-full h-full overflow-hidden">
-      <div class="sticky top-0 bg-white z-10 px-4 shadow-md rounded-b-lg">
+      <div class="sticky top-0 z-10 px-4 shadow-md rounded-b-lg">
         <div class="flex items-center flex-wrap gap-2 my-2 py-1.5 overflow-x-auto">
           <CategorySelector
             :categoryArray="nicknameCategories.slice(1)"
@@ -258,7 +258,7 @@ onMounted(async () => {
             :isSelected="isCategorySelected"
           />
         </div>
-        <div class="border-t border-[#eee]"></div>
+        <div class="border-t border-[#eee] dark:border-[#999]"></div>
         <div class="flex items-center flex-wrap gap-2 my-2 py-1.5">
           <span class="inline-block w-10 font-semibold text-gray-800">선택</span>
           <div class="flex gap-2">
@@ -300,6 +300,7 @@ onMounted(async () => {
                 'bg-blue-50 border-l-2 border-[#3b82f6] shadow-md': selectedCommentIds.includes(
                   item.id,
                 ),
+                'dark:bg-gray-400': !selectedCommentIds.includes(item.id),
                 'ml-5': !item.isTopLevel,
               }"
               @click="toggleItemSelection(item.id)"

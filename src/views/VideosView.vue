@@ -108,7 +108,7 @@ onMounted(() => {
         <div
           v-for="item in videoStore.videoList"
           :key="item.id"
-          class="border border-gray-300 rounded-2xl overflow-hidden bg-white shadow-md transition-transform duration-200 ease-in-out hover:translate-y-[-4px] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)]"
+          class="border border-gray-300 dark:border-gray-400 rounded-2xl overflow-hidden bg-white dark:bg-gray-400 shadow-md transition-transform duration-200 ease-in-out hover:translate-y-[-4px] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)]"
           :class="{
             'cursor-not-allowed': item.privacy === 'private',
             'cursor-pointer': item.privacy !== 'priate',
@@ -139,7 +139,7 @@ onMounted(() => {
                 />
               </svg>
             </div>
-            <div v-if="item.privacy === 'unlisted'" class="absolute top-2.5 right-2.5 z-20">
+            <div v-else-if="item.privacy === 'unlisted'" class="absolute top-2.5 right-2.5 z-20">
               <svg
                 width="30px"
                 height="30px"

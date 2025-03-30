@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="flex flex-col bg-white shadow-lg rounded-2xl w-full mx-auto overflow-auto">
+  <div class="flex flex-col bg-white shadow-lg w-full mx-auto overflow-auto">
     <!-- 히어로 섹션 -->
     <section class="gradient-bg py-24">
       <div class="container mx-auto px-4 max-w-5xl">
@@ -23,7 +23,7 @@
           </div>
 
           <!-- 문제점 카드 -->
-          <div class="card-shadow bg-white rounded-2xl p-8 mb-16 w-full max-w-4xl">
+          <div class="card-shadow bg-white dark:bg-gray-400 rounded-2xl p-8 mb-16 w-full max-w-4xl">
             <div class="flex flex-col md:flex-row items-center">
               <div class="md:w-1/3 mb-6 md:mb-0">
                 <div
@@ -55,8 +55,12 @@
           </div>
 
           <!-- 솔루션 카드 -->
-          <div class="card-shadow bg-white rounded-2xl overflow-hidden w-full max-w-4xl mb-16">
-            <div class="bg-gradient-to-r from-red-500 to-pink-600 py-6 px-8">
+          <div
+            class="card-shadow bg-white dark:bg-gray-400 rounded-2xl overflow-hidden w-full max-w-4xl mb-16"
+          >
+            <div
+              class="bg-gradient-to-r from-red-500 to-pink-600 dark:from-red-600 dark:to-pink-700 py-6 px-8"
+            >
               <h2 class="text-3xl font-bold text-white">스마트 댓글 필터링 서비스</h2>
             </div>
             <div class="p-10">
@@ -73,7 +77,7 @@
                     <li class="flex items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 text-green-500 mr-3"
+                        class="h-5 w-5 text-green-500 dark:text-lime-400 mr-3"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -88,7 +92,7 @@
                     <li class="flex items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 text-green-500 mr-3"
+                        class="h-5 w-5 text-green-500 dark:text-lime-400 mr-3"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -103,7 +107,7 @@
                     <li class="flex items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5 text-green-500 mr-3"
+                        class="h-5 w-5 text-green-500 dark:text-lime-400 mr-3"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -157,7 +161,7 @@
         <h2 class="text-3xl font-bold text-gray-800">주요 기능</h2>
       </div>
       <div class="container mx-auto px-4 grid grid-cols-1 max-w-5xl md:grid-cols-3 gap-8">
-        <div class="bg-white p-6 rounded-xl shadow-md text-center">
+        <div class="bg-white dark:bg-gray-400 p-6 rounded-xl shadow-md text-center">
           <div class="text-4xl mb-4">🛡️</div>
           <h3 class="text-xl font-semibold mb-3 text-gray-800">고급 스팸 필터링</h3>
           <p class="text-gray-600">
@@ -165,7 +169,7 @@
             깨끗한 댓글창을 유지하세요.
           </p>
         </div>
-        <div class="bg-white p-6 rounded-xl shadow-md text-center">
+        <div class="bg-white dark:bg-gray-400 p-6 rounded-xl shadow-md text-center">
           <div class="text-4xl mb-4">👀</div>
           <h3 class="text-xl font-semibold mb-3 text-gray-800">깔끔한 댓글 보기</h3>
           <p class="text-gray-600">
@@ -173,7 +177,7 @@
             중요한 내용만 볼 수 있습니다.
           </p>
         </div>
-        <div class="bg-white p-6 rounded-xl shadow-md text-center">
+        <div class="bg-white dark:bg-gray-400 p-6 rounded-xl shadow-md text-center">
           <div class="text-4xl mb-4">⚡</div>
           <h3 class="text-xl font-semibold mb-3 text-gray-800">가볍고 빠른 동작</h3>
           <p class="text-gray-600">
@@ -184,7 +188,7 @@
     </section>
 
     <!-- 사용 방법 섹션 -->
-    <section id="how-it-works" class="py-20 bg-gradient-to-b from-white to-gray-50">
+    <section id="how-it-works" class="py-20">
       <div class="container mx-auto px-4">
         <div class="mb-16 text-center">
           <h2 class="text-3xl font-bold text-gray-800 relative inline-block">
@@ -197,16 +201,16 @@
           class="flex flex-col md:flex-row justify-between gap-8 max-w-5xl mx-auto relative mt-10"
         >
           <!-- 연결선 (데스크톱에서만 보임) -->
-          <div class="hidden md:block absolute top-8 left-0 right-0 h-1 bg-gray-200 z-0"></div>
+          <div class="hidden md:block absolute top-8 left-0 right-0 h-1 bg-gray-600 z-0"></div>
 
           <!-- Step 1 -->
           <div
-            class="flex-1 bg-white rounded-xl shadow-lg overflow-visible transition-all duration-300 hover:shadow-xl z-10 mt-6"
+            class="flex-1 bg-white dark:bg-gray-400 rounded-xl shadow-lg overflow-visible transition-all duration-300 hover:shadow-xl z-10 mt-6"
           >
             <div class="relative">
               <div class="absolute -top-8 left-1/2 transform -translate-x-1/2">
                 <div
-                  class="flex items-center justify-center h-10 w-10 bg-red-600 text-white text-sm font-semibold rounded-full border-4 border-white shadow-md"
+                  class="flex items-center justify-center h-10 w-10 bg-red-600 text-white text-sm font-semibold rounded-full border-4 border-white dark:border-gray-400 shadow-md"
                 >
                   01
                 </div>
@@ -236,12 +240,12 @@
 
           <!-- Step 2 -->
           <div
-            class="flex-1 bg-white rounded-xl shadow-lg overflow-visible transition-all duration-300 hover:shadow-xl z-10 mt-6"
+            class="flex-1 bg-white dark:bg-gray-400 rounded-xl shadow-lg overflow-visible transition-all duration-300 hover:shadow-xl z-10 mt-6"
           >
             <div class="relative">
               <div class="absolute -top-8 left-1/2 transform -translate-x-1/2">
                 <div
-                  class="flex items-center justify-center h-10 w-10 bg-red-600 text-white text-sm font-semibold rounded-full border-4 border-white shadow-md"
+                  class="flex items-center justify-center h-10 w-10 bg-red-600 text-white text-sm font-semibold rounded-full border-4 border-white dark:border-gray-400 shadow-md"
                 >
                   02
                 </div>
@@ -277,12 +281,12 @@
 
           <!-- Step 3 -->
           <div
-            class="flex-1 bg-white rounded-xl shadow-lg overflow-visible transition-all duration-300 hover:shadow-xl z-10 mt-6"
+            class="flex-1 bg-white dark:bg-gray-400 rounded-xl shadow-lg overflow-visible transition-all duration-300 hover:shadow-xl z-10 mt-6"
           >
             <div class="relative">
               <div class="absolute -top-8 left-1/2 transform -translate-x-1/2">
                 <div
-                  class="flex items-center justify-center h-10 w-10 bg-red-600 text-white text-sm font-semibold rounded-full border-4 border-white shadow-md"
+                  class="flex items-center justify-center h-10 w-10 bg-red-600 text-white text-sm font-semibold rounded-full border-4 border-white dark:border-gray-400 shadow-md"
                 >
                   03
                 </div>
@@ -320,7 +324,7 @@
     </section>
 
     <!-- 향후 기능 섹션 -->
-    <section class="py-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl">
+    <section class="py-16">
       <div class="container mx-auto px-6 max-w-6xl">
         <!-- 헤더 부분 -->
         <div class="text-center mb-12">
@@ -342,7 +346,7 @@
         <div class="container mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-8">
           <!-- 기능 카드 1 -->
           <div
-            class="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300"
+            class="bg-white dark:bg-gray-400 rounded-xl p-8 shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300"
           >
             <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6">
               <svg
@@ -368,7 +372,7 @@
 
           <!-- 기능 카드 2 -->
           <div
-            class="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300"
+            class="bg-white dark:bg-gray-400 rounded-xl p-8 shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300"
           >
             <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
               <svg
@@ -394,7 +398,7 @@
 
           <!-- 기능 카드 3 -->
           <div
-            class="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300"
+            class="bg-white dark:bg-gray-400 rounded-xl p-8 shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300"
           >
             <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
               <svg

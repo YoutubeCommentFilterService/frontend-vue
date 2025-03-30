@@ -1,37 +1,81 @@
 <template>
-  <header class="bg-white shadow-sm sticky top-0 z-30 border-b border-gray-100">
+  <header
+    class="bg-white dark:bg-gray-800 shadow-sm dark:shadow-md sticky top-0 z-30 border-b border-gray-100 dark:border-gray-700"
+  >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <!-- 왼쪽: 타이틀 -->
         <RouterLink to="/" class="flex items-center">
           <span
-            class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text tracking-tight"
+            class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-300 dark:to-purple-300 text-transparent bg-clip-text tracking-tight"
           >
             TITLE
           </span>
         </RouterLink>
 
         <!-- 오른쪽: 네비게이션 -->
-        <nav class="flex items-center space-x-6">
+        <nav class="flex items-center space-x-6 text-gray-700 dark:text-gray-300">
           <RouterLink
             v-for="link in navLinks"
             :key="link.name"
             :to="link.path"
-            class="p-2 font-medium text-gray-700 transition-all duration-200 border-b-2 border-transparent hover:border-b-2 hover:border-gray-300"
+            class="p-2 font-medium transition-all duration-200 border-b-2 border-transparent hover:border-b-2 hover:border-gray-300"
             active-class="border-b-2 !border-blue-500 font-extrabold"
           >
             {{ link.name }}
           </RouterLink>
-          <div v-if="authStore.isLoggedIn" class="text-xs flex flex-col items-center select-none">
+          <div
+            v-if="authStore.isLoggedIn"
+            class="text-xs flex flex-col items-center select-none gap-1"
+          >
             <span class="select-none">Youtube 연동</span>
             <span class="select-none">{{ authStore.profile.hasYoutubeAccess ? '🟢' : '🔴' }}</span>
           </div>
+          <div class="text-xs w-30">
+            <label
+              class="flex flex-col w-full items-center me-5 cursor-pointer justify-center items-center gap-1"
+            >
+              <p class="font-medium text-gray-900 dark:text-gray-300 select-none">
+                {{ (themeStore.isDarkMode ? '화이트' : '다크') + '모드로 전환' }}
+              </p>
+              <div>
+                <input
+                  type="checkbox"
+                  value=""
+                  class="sr-only peer w-16"
+                  :checked="themeStore.isDarkMode"
+                  @click="toggleTheme"
+                />
+                <div
+                  class="relative justify-center w-12 h-4 rounded-full bg-gray-200 dark:bg-gray-700 peer-checked:bg-teal-600 dark:peer-checked:bg-teal-600 transition-all"
+                >
+                  <!-- 이미지 (해/달) -->
+                  <img
+                    :src="themeStore.isDarkMode ? moonIcon : sunIcon"
+                    class="absolute h-3 w-3 top-0.5 pointer-events-none z-10 select-none transition-all duration-300 ease-in-out"
+                    :class="themeStore.isDarkMode ? 'translate-x-[2.25rem]' : 'translate-x-0.5'"
+                    alt="Theme icon"
+                  />
+
+                  <!-- 움직이는 공 -->
+                  <div
+                    class="absolute h-4 w-4 bg-white rounded-full border border-gray-300 transition-all duration-300 ease-in-out"
+                    :class="
+                      themeStore.isDarkMode
+                        ? 'translate-x-[2.1rem] bg-yellow-600 border-gray-600'
+                        : 'translate-x'
+                    "
+                  ></div>
+                </div>
+              </div>
+            </label>
+          </div>
           <!-- 로그인 버튼 -->
           <div
-            class="flex ml-4 w-10 h-10 items-center justify-center transition-all duration-200 hover:opacity-90"
+            class="flex ml-4 w-10 h-10 items-center justify-center transition-all duration-200"
             :class="{
-              'rounded-full shadow-sm': !authStore.isLoggedIn,
-              'bg-gradient-to-r from-blue-500 to-purple-600': !authStore.isLoggedIn,
+              'rounded-full shadow-sm bg-gradient-to-r from-blue-500 to-purple-600':
+                !authStore.isLoggedIn,
             }"
           >
             <RouterLink
@@ -42,18 +86,19 @@
               <i class="pi pi-sign-in text-white text-base"></i>
             </RouterLink>
             <div v-else class="relative">
+              <!-- 프로필 이미지 섹션 -->
               <img
                 :src="authStore.profile.profileImage"
                 @click="handleClickUserMenu"
-                class="w-10 h-10 rounded-full cursor-pointer object-cover ring-2 ring-gray-200 transition-all relative"
+                class="w-10 h-10 rounded-full cursor-pointer object-cover ring-1 ring-gray-200 transition-all relative"
                 alt="Profile"
               />
               <div
                 v-show="isUserMenuVisible"
                 ref="userMenu"
-                class="absolute right-0 mt-3 w-56 bg-white shadow-lg rounded-xl z-50 transform transition-all duration-200 origin-top-right"
+                class="absolute right-0 mt-3 w-56 bg-gray-50 dark:bg-gray-800 shadow-lg rounded-b-xl z-50 transform transition-all duration-200 origin-top-right"
               >
-                <div class="flex items-center p-4 border-b border-gray-100 bg-gray-50 select-none">
+                <div class="flex items-center p-4 select-none">
                   <img
                     :src="authStore.profile.profileImage"
                     class="w-12 h-12 rounded-full object-cover ring-1 ring-gray-200"
@@ -61,31 +106,34 @@
                     draggable="false"
                   />
                   <div class="ml-3">
-                    <p class="text-base font-medium text-gray-800">
+                    <p class="text-base font-medium">
                       {{ authStore.profile.nickname }}
                     </p>
                   </div>
                 </div>
-
-                <div class="py-1 select-none">
+                <div class="border-t border-gray-100 dark:border-gray-300 my-1"></div>
+                <div class="py-1 select-none text-sm">
                   <div
                     @click="reloginGoogle"
-                    class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors"
+                    class="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-500 cursor-pointer transition-colors"
                   >
-                    <i class="pi pi-sync mr-3 text-blue-500"></i> 구글 재연동
+                    <i class="pi pi-sync mr-3 text-blue-500 dark:text-blue-400"></i>
+                    <p>구글 재연동</p>
                   </div>
                   <div
                     @click="logout"
-                    class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors"
+                    class="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-500 cursor-pointer transition-colors"
                   >
-                    <i class="pi pi-sign-out mr-3 text-gray-500"></i> 로그아웃
+                    <i class="pi pi-sign-out mr-3 text-gray-500 dark:text-gray-400"></i>
+                    <p>로그아웃</p>
                   </div>
-                  <div class="border-t border-gray-100 my-1"></div>
+                  <div class="border-t border-gray-100 dark:border-gray-300 my-1"></div>
                   <div
                     @click="withdrawService"
-                    class="flex items-center px-4 py-3 text-sm text-red-500 hover:bg-red-50 cursor-pointer transition-colors"
+                    class="flex items-center px-4 py-3 hover:bg-red-50 dark:hover:bg-red-200 cursor-pointer transition-colors"
                   >
-                    <i class="pi pi-user-minus mr-3"></i> 회원탈퇴
+                    <i class="pi pi-user-minus mr-3 text-red-500 dark:text-red-400"></i>
+                    <p class="text-red-500 dark:text-red-400">회원탈퇴</p>
                   </div>
                 </div>
               </div>
@@ -111,10 +159,19 @@ import { useAuthStore } from '@/stores/auth'
 import { useVideoStore } from '@/stores/video'
 import { useRouter } from 'vue-router'
 import { onMounted, onUnmounted, ref } from 'vue'
+import { useThemeStore } from '@/stores/theme'
+
+const sunIcon = '/imgs/sun.png'
+const moonIcon = '/imgs/moon.png'
 
 const authStore = useAuthStore()
 const videoStore = useVideoStore()
 const router = useRouter()
+const themeStore = useThemeStore()
+
+const toggleTheme = () => {
+  themeStore.toggleTheme()
+}
 
 const reloginGoogle = () => {
   window.location.href = `${import.meta.env.VITE_BACKEND_URL}/oauth2/authorize/google`
