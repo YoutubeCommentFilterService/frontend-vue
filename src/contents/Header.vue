@@ -33,7 +33,7 @@
           </div>
           <div class="text-xs w-30">
             <label
-              class="flex flex-col w-full items-center me-5 cursor-pointer justify-center items-center gap-1"
+              class="flex flex-col w-full items-center me-5 cursor-pointer justify-center gap-1"
             >
               <p class="font-medium text-gray-900 dark:text-gray-300 select-none">
                 {{ (themeStore.isDarkMode ? '화이트' : '다크') + '모드로 전환' }}
@@ -166,8 +166,8 @@ const moonIcon = '/imgs/moon.png'
 
 const authStore = useAuthStore()
 const videoStore = useVideoStore()
-const router = useRouter()
 const themeStore = useThemeStore()
+const router = useRouter()
 
 const toggleTheme = () => {
   themeStore.toggleTheme()
