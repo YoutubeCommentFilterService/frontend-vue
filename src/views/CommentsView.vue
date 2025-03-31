@@ -216,11 +216,15 @@ const getLabel = (key: string) => {
   }
 }
 
-const { title, description, publishedAt } = state.video
+const { id, title, description, publishedAt } = state.video
 const videoDetails = {
   title,
-  description,
   publishedAt,
+  // description,
+}
+
+const moveToYoutube = (baseUrl: string) => {
+  window.open(`${baseUrl}/${id}`, '_blank', 'noopener,noreferrer')
 }
 
 const router = useRouter()
@@ -241,15 +245,31 @@ onMounted(async () => {
 <template>
   <div class="flex flex-col w-full md:flex-row">
     <div
-      class="flex flex-row gap-5 p-5 md:flex-col md:w-[400px] md:flex-shrink-0 md:items-center md:text-left"
+      class="flex flex-row gap-5 p-5 pb-0 md:pb-3 justify-center md:flex-col md:w-[400px] md:flex-shrink-0 md:items-center md:text-left"
     >
-      <img :src="state.video.thumbnail" class="flex w-[320px] h-auto object-cover rounded-lg" />
-      <div class="flex flex-col overflow-hidden w-full">
-        <div v-for="(value, key) in videoDetails" :key="key" class="flex flex-col">
-          <p class="label font-bold text-gray-800 mb-1">{{ getLabel(key) }}</p>
-          <p class="text-gray-600 m-0 break-words overflow-hidden text-ellipsis">
-            {{ key === 'publishedAt' ? value : value }}
-          </p>
+      <!-- 스튜디오, 영상 각 각 이동 -->
+      <div
+        class="flex flex-row md:flex-col justify-around w-full text-white font-bold gap-2 md:gap-2"
+      >
+        <div class="relative flex items-center justify-center">
+          <img :src="state.video.thumbnail" class="w-full h-auto object-cover rounded-lg" />
+          <div class="absolute inset-0 flex items-start justify-end p-2">
+            <img
+              src="/imgs/youtube-studio-icon.svg"
+              @click="() => moveToYoutube('https://studio.youtube.com/video')"
+              class=".svg w-10 cursor-pointer"
+              title="유튜브 스튜디오. 본인이 아니면 못들어가요!"
+              alt="유튜브 스튜디오 링크"
+            />
+          </div>
+        </div>
+        <div class="flex flex-col overflow-hidden w-full">
+          <div v-for="(value, key) in videoDetails" :key="key" class="flex flex-col">
+            <p class="label text-base font-bold text-gray-800">{{ getLabel(key) }}</p>
+            <p class="text-sm text-gray-600 mb-1 break-words overflow-hidden text-ellipsis">
+              {{ value }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
