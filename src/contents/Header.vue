@@ -129,7 +129,7 @@
                   </div>
                   <div class="border-t border-gray-100 dark:border-gray-300 my-1"></div>
                   <div
-                    @click="withdrawService"
+                    @click="() => (showWithdrawModal = true)"
                     class="flex items-center px-4 py-3 hover:bg-red-50 dark:hover:bg-red-200 cursor-pointer transition-colors"
                   >
                     <i class="pi pi-user-minus mr-3 text-red-500 dark:text-red-400"></i>
@@ -191,10 +191,6 @@ const confirmWithdraw = async () => {
   } catch (err) {
     console.error(err)
   }
-}
-
-const withdrawService = () => {
-  showWithdrawModal.value = true
 }
 
 const logout = async () => {
