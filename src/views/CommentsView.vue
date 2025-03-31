@@ -13,6 +13,7 @@ import type { InterVideoListNComment } from '@/types/video-interface'
 import InfiniteScroll from '@/components/InfiniteScroll.vue'
 import CategorySelector from '@/components/comments-view/CategorySelector.vue'
 import CommentSelectorBtn from '@/components/comments-view/CommentSelectorBtn.vue'
+import ConfirmModal from '@/components/ConfirmModal.vue'
 import { useRouter } from 'vue-router'
 
 const state = history.state as InterVideoListNComment
@@ -25,6 +26,8 @@ const nicknameCategories = ref<string[]>([])
 const commentCategories = ref<string[]>([])
 const pageNum = ref<number>(1)
 const isLoading = ref<boolean>(false)
+const isDeleting = ref<boolean>(false)
+const showWithdrawModal = ref<boolean>(false)
 const selectedCategories = ref<{
   nickname: string[]
   comment: string[]
@@ -147,6 +150,7 @@ const deselectAllItems = () => {
 }
 
 const deleteSelectedItems = async () => {
+  isDeleting.value = true
   const deleteTargetComments: DeleteCommentObject[] = []
   const [topLevelComments, replyComments] = selectedCommentIds.value.reduce(
     ([top, reply], id) => {
@@ -196,6 +200,7 @@ const deleteSelectedItems = async () => {
   commentItems.value = filterItems(commentItems.value)
   filteredItems.value = filterItems(filteredItems.value)
   selectedCommentDict.value = {}
+  isDeleting.value = false
 }
 
 const getLabel = (key: string) => {
@@ -274,7 +279,7 @@ onMounted(async () => {
             <CommentSelectorBtn :onClick="selectAllItems" text="전체 선택" />
             <CommentSelectorBtn :onClick="deselectAllItems" text="전체 해제" />
             <button
-              @click="deleteSelectedItems"
+              @click="() => (showWithdrawModal = true)"
               class="px-2 py-1 rounded text-sm transition-all duration-200 ease-in-out"
               :disabled="!hasSelectedComments"
               :class="{
@@ -339,10 +344,23 @@ onMounted(async () => {
             v-if="!isLoading && isLast && filteredItems.length === 0"
             class="flex flex-grow text-xl bg-[#ecf0f1] rounded-lg p-5 justify-center items-center"
           >
-            <div class="m-0 font-bold text-[#bdc3c7]">댓글이 존재하지 않습니다</div>
+            <div class="m-0 font-bold text-[#bdc3c7] select-none">댓글이 존재하지 않습니다</div>
           </div>
         </div>
       </InfiniteScroll>
+    </div>
+    <ConfirmModal
+      v-model="showWithdrawModal"
+      title="댓글 삭제"
+      message="정말 댓글 삭제를 진행하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+      confirm-text="삭제"
+      @confirm="deleteSelectedItems"
+    />
+    <div
+      v-show="isDeleting"
+      class="absolute flex w-full h-full bg-gray-500 opacity-70 z-10 justify-center items-center"
+    >
+      <span class="text-3xl text-black opacity-100">댓글을 삭제하는 중입니다...</span>
     </div>
   </div>
 </template>
