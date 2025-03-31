@@ -9,14 +9,13 @@
         loginType="Google 로그인"
         bgColor="dark:bg-black dark:hover:bg-gray-800 bg-white hover:bg-gray-100"
         textColor="dark:text-white text-black"
-        :icon="GoogleLoginIcon"
+        icon="/imgs/g-logo.webp"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import GoogleLoginIcon from '@/components/icons/g-logo.webp'
 import LoginButton from '@/components/Commons/LoginButton.vue'
 
 const handleGoogleLogin = () => {
