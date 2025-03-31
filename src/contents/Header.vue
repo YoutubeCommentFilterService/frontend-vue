@@ -51,12 +51,11 @@
                 >
                   <!-- 이미지 (해/달) -->
                   <img
-                    :src="themeStore.isDarkMode ? moonIcon : sunIcon"
+                    :src="themeStore.isDarkMode ? '/imgs/moon.png' : '/imgs/sun.png'"
                     class="absolute h-3 w-3 top-0.5 pointer-events-none z-10 select-none transition-all duration-300 ease-in-out"
                     :class="themeStore.isDarkMode ? 'translate-x-[2.25rem]' : 'translate-x-0.5'"
                     alt="Theme icon"
                   />
-
                   <!-- 움직이는 공 -->
                   <div
                     class="absolute h-4 w-4 bg-white rounded-full border border-gray-300 transition-all duration-300 ease-in-out"
@@ -160,9 +159,6 @@ import { useVideoStore } from '@/stores/video'
 import { useRouter } from 'vue-router'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useThemeStore } from '@/stores/theme'
-
-const sunIcon = '/imgs/sun.png'
-const moonIcon = '/imgs/moon.png'
 
 const authStore = useAuthStore()
 const videoStore = useVideoStore()
