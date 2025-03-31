@@ -76,6 +76,9 @@ const themeStore = useThemeStore()
 
 onMounted(() => {
   const refreshToken: string | null = localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN)
+  themeStore.loadTheme()
+  authStore.restore()
+  authStore.clearLocalStorage()
   if (refreshToken) {
     tokenAxiosInstance
       .post<UserProfile>('/api/member/refresh-auth', { refreshToken })
@@ -87,10 +90,9 @@ onMounted(() => {
       })
   }
 
-  themeStore.loadTheme()
-
   window.addEventListener('beforeunload', () => {
     videoStore.backup()
+    authStore.backup()
   })
 })
 </script>
