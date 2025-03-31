@@ -6,12 +6,14 @@ import type {
   CommentDeleteRequestData,
   CommentResource,
   CommentResponseData,
+  DeleteCommentObject,
   PredictCategory,
 } from '@/types/comment-interface'
 import type { InterVideoListNComment } from '@/types/video-interface'
 import InfiniteScroll from '@/components/InfiniteScroll.vue'
 import CategorySelector from '@/components/comments-view/CategorySelector.vue'
 import CommentSelectorBtn from '@/components/comments-view/CommentSelectorBtn.vue'
+import { useRouter } from 'vue-router'
 
 const state = history.state as InterVideoListNComment
 const authStore = useAuthStore()
@@ -27,7 +29,8 @@ const selectedCategories = ref<{
   nickname: string[]
   comment: string[]
 }>({ nickname: [], comment: [] })
-const selectedCommentIds = ref<string[]>([])
+const selectedCommentDict = ref<Record<string, string>>({})
+const selectedCommentIds = computed(() => Object.keys(selectedCommentDict.value))
 const selectedCommentCount = computed(() => selectedCommentIds.value.length)
 const hasSelectedComments = computed(() => selectedCommentCount.value > 0)
 
@@ -82,6 +85,8 @@ const loadMoreItem = async () => {
 
 const refreshItem = async () => {
   try {
+    commentItems.value = filteredItems.value = []
+    selectedCommentDict.value = {}
     const data = await fetchComments(1, maxFetchNum, false)
     if (data) {
       isLast.value = data.isLast === 'Y' ? true : false
@@ -125,24 +130,24 @@ const isCategorySelected = (type: 'comment' | 'nickname', category: string): boo
   return selectedCategories.value[type].includes(category)
 }
 
-const toggleItemSelection = (itemId: string) => {
-  const index = selectedCommentIds.value.indexOf(itemId)
-  if (index === -1) selectedCommentIds.value.push(itemId)
-  else selectedCommentIds.value.splice(index, 1)
+const toggleItemSelection = (itemId: string, channelId: string) => {
+  const id = selectedCommentDict.value[itemId]
+  if (id) delete selectedCommentDict.value[itemId]
+  else selectedCommentDict.value[itemId] = channelId
 }
 
 const selectAllItems = () => {
   filteredItems.value.forEach((item) => {
-    if (!selectedCommentIds.value.includes(item.id)) selectedCommentIds.value.push(item.id)
+    selectedCommentDict.value[item.id] = item.channelId
   })
 }
 
 const deselectAllItems = () => {
-  selectedCommentIds.value = []
+  selectedCommentDict.value = {}
 }
 
 const deleteSelectedItems = async () => {
-  selectedCommentIds.value.sort((a, b) => a.length - b.length)
+  const deleteTargetComments: DeleteCommentObject[] = []
   const [topLevelComments, replyComments] = selectedCommentIds.value.reduce(
     ([top, reply], id) => {
       ;(id.length === 26 ? top : reply).push(id)
@@ -151,22 +156,27 @@ const deleteSelectedItems = async () => {
     [[], []] as [string[], string[]],
   )
 
-  const deleteTargetCommentIdsMap: Map<string, boolean> = new Map(
-    topLevelComments.map((id) => [id, true]),
-  )
-  const re_replyComments = replyComments.filter((replyId) => {
-    const rootId = replyId.split('.')[0]
-    return !deleteTargetCommentIdsMap.get(rootId)
-  })
-  re_replyComments.forEach((id) => deleteTargetCommentIdsMap.set(id, true))
+  const deleteTargetCommentIdsSet: Set<string> = new Set(topLevelComments)
+  replyComments
+    .filter((replyId) => {
+      const rootId = replyId.split('.')[0]
+      return !deleteTargetCommentIdsSet.has(rootId)
+    })
+    .forEach((id) => deleteTargetCommentIdsSet.add(id))
 
-  const deleteCommentIds = [...topLevelComments, ...re_replyComments]
+  deleteTargetCommentIdsSet.forEach((id) => {
+    deleteTargetComments.push({
+      commentId: id,
+      channelId: selectedCommentDict.value[id],
+    })
+  })
+
   await Promise.all(
-    Array.from({ length: Math.ceil(deleteCommentIds.length / 50) }, (_, idx) => {
-      const deleteCommentIdsArg = deleteCommentIds.slice(idx * 50, (idx + 1) * 50).join(',')
+    Array.from({ length: Math.ceil(deleteTargetComments.length / 50) }, (_, idx) => {
+      const deleteCommentsDto = deleteTargetComments.slice(idx * 50, (idx + 1) * 50)
       return tokenAxiosInstance.delete('/api/youtube', {
         data: {
-          justDeleteComments: deleteCommentIdsArg,
+          justDeleteComments: deleteCommentsDto,
         } as CommentDeleteRequestData,
       })
     }),
@@ -175,17 +185,17 @@ const deleteSelectedItems = async () => {
   const filterItems = (items: CommentResource[]) => {
     return items.filter((item) => {
       if (item.id.length === 26) {
-        return !deleteTargetCommentIdsMap.get(item.id)
+        return !deleteTargetCommentIdsSet.has(item.id)
       } else {
         const rootId = item.id.split('.')[0]
-        return !(deleteTargetCommentIdsMap.get(item.id) || deleteTargetCommentIdsMap.get(rootId))
+        return !(deleteTargetCommentIdsSet.has(item.id) || deleteTargetCommentIdsSet.has(rootId))
       }
     })
   }
 
   commentItems.value = filterItems(commentItems.value)
   filteredItems.value = filterItems(filteredItems.value)
-  selectedCommentIds.value = []
+  selectedCommentDict.value = {}
 }
 
 const getLabel = (key: string) => {
@@ -208,13 +218,12 @@ const videoDetails = {
   publishedAt,
 }
 
-console.log(publishedAt)
-
+const router = useRouter()
 onMounted(async () => {
-  // if (!authStore.isLoggedIn) {
-  //     alert("로그인을 먼저 해주세요")
-  //     router.replace("/");
-  // }
+  if (!authStore.isLoggedIn) {
+    alert('로그인을 먼저 해주세요')
+    router.replace('/')
+  }
 
   const response = await tokenAxiosInstance.get<PredictCategory>('/api/metadata/predict-class')
   const categories = response.data
@@ -303,7 +312,7 @@ onMounted(async () => {
                 'dark:bg-gray-400': !selectedCommentIds.includes(item.id),
                 'ml-5': !item.isTopLevel,
               }"
-              @click="toggleItemSelection(item.id)"
+              @click="toggleItemSelection(item.id, item.channelId)"
             >
               <img
                 :src="item.profileImage"
