@@ -4,18 +4,13 @@
     <!-- main-content  -->
     <main class="flex-grow flex overflow-y-auto">
       <div class="hidden lg:flex flex-grow bg-gray-100 items-center justify-center">
-        <amp-ad
-          width="100vw"
-          height="320"
-          type="adsense"
-          data-ad-client="ca-pub-8884994186118361"
-          data-ad-slot="4463854573"
-          data-auto-format="rspv"
-          data-full-width=""
-        >
-          <div overflow=""></div>
-        </amp-ad>
-        <!-- <span class="text-sm text-gray-700">광고</span> -->
+        <ins
+          class="kakao_ad_area"
+          style="display: none"
+          data-ad-unit="DAN-vOzU50P1ln9wdaO6"
+          data-ad-width="160"
+          data-ad-height="600"
+        ></ins>
       </div>
       <div class="flex w-full max-w-7xl">
         <RouterView class="bg-white dark:bg-gray-300" />
@@ -24,18 +19,15 @@
         <ins
           class="kakao_ad_area"
           style="display: none"
-          data-ad-unit="DAN-vOzU50P1ln9wdaO6"
+          data-ad-unit="DAN-1njAgw7cXtts9jcy"
           data-ad-width="160"
           data-ad-height="600"
         ></ins>
-        <!-- <span class="text-sm text-gray-700">환영!</span> -->
       </div>
     </main>
 
     <!-- 푸터 -->
-    <footer
-      class="py-2 bg-white dark:bg-gray-300 border-t border-gray-200 bg-gray-50 flex-shrink-0"
-    >
+    <footer class="py-2 bg-gray-50 dark:bg-gray-300 border-t border-gray-200 flex-shrink-0">
       <div class="max-w-4xl mx-auto text-center">
         <div class="flex flex-col md:flex-row justify-center items-center">
           <div class="flex space-x-6">
@@ -74,6 +66,10 @@ const authStore = useAuthStore()
 const videoStore = useVideoStore()
 const themeStore = useThemeStore()
 
+const adLoaded = () => {
+  console.info('Ad loaded')
+}
+
 onMounted(() => {
   const refreshToken: string | null = localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN)
   themeStore.loadTheme()
@@ -96,3 +92,12 @@ onMounted(() => {
   })
 })
 </script>
+
+<style>
+@media (max-width: 1600px) {
+  /* 1600px 이하일 때 숨김 */
+  .kakao_ad_area {
+    display: none !important;
+  }
+}
+</style>
