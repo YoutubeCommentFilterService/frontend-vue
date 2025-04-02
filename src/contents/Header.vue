@@ -9,7 +9,7 @@
           <span
             class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-300 dark:to-purple-300 text-transparent bg-clip-text tracking-tight"
           >
-            TITLE
+            유댓청소
           </span>
         </RouterLink>
 
