@@ -1,9 +1,9 @@
 <template>
   <div class="max-w-800 p-20 leading-relaxed font-Pretendatd">
-    <h1>개인정보 수집 및 이용 동의서</h1>
+    <h1>개인정보 수집 및 이용에 대한 안내</h1>
     <p>
-      본 동의서는 회원 가입, 서비스 제공 및 개선 과정에서 필요한 개인정보 수집 및 이용에 대한 내용을
-      담고 있습니다.
+      본 안내는 회원 가입 및 서비스 제공 과정에서 필요한 개인정보의 수집, 이용 방식과 이용자의
+      권리에 대해 설명합니다.
     </p>
 
     <section class="consent-section">
