@@ -66,10 +66,6 @@ const authStore = useAuthStore()
 const videoStore = useVideoStore()
 const themeStore = useThemeStore()
 
-const adLoaded = () => {
-  console.info('Ad loaded')
-}
-
 onMounted(() => {
   const refreshToken: string | null = localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN)
   themeStore.loadTheme()
@@ -80,9 +76,12 @@ onMounted(() => {
       .post<UserProfile>('/api/member/refresh-auth', { refreshToken })
       .then(({ data }) => {
         authStore.login(data)
-      })
-      .then(() => {
         videoStore.restore()
+      })
+      .catch(err => {
+        localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN)
+        authStore.logout()
+        videoStore.flush()
       })
   }
 
