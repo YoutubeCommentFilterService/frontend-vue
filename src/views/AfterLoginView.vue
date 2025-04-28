@@ -55,7 +55,6 @@ onMounted(async () => {
 const submitConsent = async () => {
   await tokenAxiosInstance
     .post<AfterLoginDto>('/api/member/accept-signin')
-    .then((res) => res.data)
     .then(async () => {
       await getRefreshToken()
       router.push('/')
@@ -65,10 +64,7 @@ const submitConsent = async () => {
 const rejectConsent = async () => {
   await tokenAxiosInstance
     .post<AfterLoginDto>('/api/member/reject-signin')
-    .then((res) => res.data)
-    .then((data) => {
-      router.push('/')
-    })
+    .then(() => router.push('/'))
 }
 
 const getRefreshToken = async () => {
