@@ -20,6 +20,7 @@ const state = history.state as InterVideoListNComment
 const authStore = useAuthStore()
 
 const commentItems = ref<CommentResource[]>([])
+const topLevelCommentIds = ref<Set<string>>(new Set<string>([]))
 const filteredItems = ref<CommentResource[]>([])
 const isLast = ref<boolean>(false)
 const nicknameCategories = ref<string[]>([])
@@ -73,6 +74,12 @@ const loadMoreItem = async () => {
         commentItems.value = [...commentItems.value, ...data.items]
         pageNum.value += 1
         filteredItems.value = commentItems.value
+        topLevelCommentIds.value = new Set([
+          ...topLevelCommentIds.value, 
+          ...data.items
+            .filter(item => item.id.length === 26)
+            .map(item => item.id)
+        ])
         return true
       } else {
         isLast.value = true
@@ -133,10 +140,23 @@ const isCategorySelected = (type: 'comment' | 'nickname', category: string): boo
   return selectedCategories.value[type].includes(category)
 }
 
+// TODO: 하위가 선택된 상태라도 상위를 선택 해제하면 전부 해제하게 해야 하는가?
+// 이건 좀 고민해볼만 하다
 const toggleItemSelection = (itemId: string, channelId: string) => {
   const id = selectedCommentDict.value[itemId]
   if (id) delete selectedCommentDict.value[itemId]
-  else selectedCommentDict.value[itemId] = channelId
+  else {
+    const updateDict: Record<string, string> = {}
+    updateDict[itemId] = channelId
+    if (itemId.length === 26) {
+      const filtered = commentItems.value.filter(x => x.id.startsWith(itemId))
+      filtered.forEach(item => updateDict[item.id] = item.channelId)
+    }
+    selectedCommentDict.value = {
+      ...selectedCommentDict.value,
+      ...updateDict
+    }
+  }
 }
 
 const selectAllItems = () => {
@@ -336,7 +356,7 @@ onMounted(async () => {
                   item.id,
                 ),
                 'dark:bg-gray-400': !selectedCommentIds.includes(item.id),
-                'ml-5': !item.isTopLevel,
+                'ml-5': !item.isTopLevel && topLevelCommentIds.has(item.id.split('.')[0]),
               }"
               @click="toggleItemSelection(item.id, item.channelId)"
             >
