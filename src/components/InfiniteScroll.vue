@@ -25,6 +25,11 @@ const props = defineProps({
 const isLoading = ref(false)
 const showScrollToTop = ref(false)
 
+const currentPageModel = defineModel('isLoading', { type: Boolean, default: false });
+watch(isLoading, () => {
+  currentPageModel.value = isLoading.value
+})
+
 const observer = ref<IntersectionObserver | null>(null)
 const infScrollPointer = ref(null)
 const scrollContainer = ref<HTMLElement | null>(null)
