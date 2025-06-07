@@ -35,7 +35,8 @@ const visiblePages = computed(() => {
     return pages;
 })
 
-const gotoPage = (page: number) => {
+const gotoPage = (page: number | string) => {
+    if (typeof page === 'string') return;
     if (page <= 0 || page > props.totalPages) return
     currentPage.value = page
     currentPageModel.value = page
