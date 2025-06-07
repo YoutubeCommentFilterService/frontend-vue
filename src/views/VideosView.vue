@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import type { VideoResponseData, VideoResource } from '@/types/video-interface'
@@ -10,6 +10,8 @@ import InfiniteScroll from '@/components/InfiniteScroll.vue'
 const router = useRouter()
 const authStore = useAuthStore()
 const videoStore = useVideoStore()
+
+const isLoading = ref<boolean>(true)
 
 const videoPrivacyTooltip: { [key: string]: string | undefined } = {
   private: '비공개 영상은 댓글 조회가 불가합니다 ㅠㅠ',
@@ -47,10 +49,9 @@ const fetchVideos = async (page: number, take: number = 50): Promise<VideoRespon
 }
 
 const refreshVideos = async (take: number = 50): Promise<VideoResponseData | void> => {
-  videoStore.isLast = false
+  videoStore.flush()
   const data = await fetchVideos(1, take)
 
-  videoStore.flush()
   if (data) videoStore.push(data)
 }
 
@@ -83,9 +84,23 @@ const refreshItem = async () => {
   await refreshVideos(maxFetchNum)
 }
 
-const convertUTC2KST = (datetime: string): string => {
-  if (!datetime.endsWith('Z')) datetime = datetime + 'Z'
-  return new Date(datetime).toLocaleString('ko-kr', { timeZone: 'Asia/Seoul' })
+const convertUTC2KST = (datetime: string | string[]): string => {
+  let date;
+  if (typeof datetime === 'object') {
+    date = new Date(Date.UTC(
+      datetime[0],         // year
+      datetime[1] - 1,     // month (0-based)
+      datetime[2],         // day
+      datetime[3] || 0,    // hour
+      datetime[4] || 0,    // minute
+      datetime[5] || 0     // second
+    ));
+  }
+  else {
+    if (!datetime.endsWith('Z')) datetime = datetime + 'Z'
+    date = new Date(datetime)
+  }
+  return date.toLocaleString('ko-kr', { timeZone: 'Asia/Seoul' });
 }
 
 onMounted(() => {
@@ -103,15 +118,19 @@ onMounted(() => {
       :load-more-item="loadMoreItem"
       :refresh-item="refreshItem"
       spinner-text="동영상을 불러오는 중입니다!!"
+      v-model:is-loading="isLoading"
     >
-      <div class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-4 p-5">
+      <div 
+        class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-4 p-5"
+        v-if="videoStore.videoList.length > 0"
+      >
         <div
           v-for="item in videoStore.videoList"
           :key="item.id"
           class="border border-gray-300 dark:border-gray-400 rounded-2xl overflow-hidden bg-white dark:bg-gray-400 shadow-md transition-transform duration-200 ease-in-out hover:translate-y-[-4px] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)]"
           :class="{
             'cursor-not-allowed': item.privacy === 'private',
-            'cursor-pointer': item.privacy !== 'priate',
+            'cursor-pointer': item.privacy !== 'private',
           }"
           @click="item.privacy !== 'private' && onVideoClick(item)"
           :title="videoPrivacyTooltip[item.privacy]"
@@ -159,6 +178,13 @@ onMounted(() => {
             업로드 일자: {{ convertUTC2KST(item.publishedAt) }}
           </p>
         </div>
+      </div>
+      <div 
+        class="items-center  justify-center flex h-full"
+        v-else-if="!isLoading"
+      >
+        <p v-if="authStore.profile.hasYoutubeAccess" class="">동영상이 존재하지 않습니다.</p>
+        <p v-else>유튜브 계정 연동을 먼저 진행해 주세요!</p>
       </div>
     </InfiniteScroll>
   </div>
