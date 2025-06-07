@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { UserInfo } from '@/types/user-info-interface.ts';
-import HandleUserModal from '@/components/admin/HandleUserModal.vue'
+import type { UserInfo } from '@/types/user-info-interface';
 
 interface CustomProp extends UserInfo {
     activeId: string

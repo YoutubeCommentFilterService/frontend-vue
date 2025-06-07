@@ -4,7 +4,7 @@ import HandleUser from '@/components/admin/HandleUser.vue';
 import PageNavigator from '@/components/Commons/PageNavigator.vue';
 import ConfirmModal from '@/components/ConfirmModal.vue';
 import { onMounted, onUnmounted, ref } from 'vue';
-import { UserInfo, UserInfoResponseData } from '@/types/user-info-interface';
+import type { UserInfo, UserInfoResponseData } from '@/types/user-info-interface';
 import { tokenAxiosInstance } from '@/utils';
 
 const authStore = useAuthStore()
