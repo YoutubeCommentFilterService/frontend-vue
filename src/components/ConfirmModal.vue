@@ -1,5 +1,5 @@
 <template>
-  <div v-if="modelValue" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div v-if="modelValue" class="fixed inset-0 z-50 flex items-center justify-center p-4" :id="id">
     <!-- 배경 오버레이 - 투명도 40%로 조정 (60% 투명) -->
     <div class="absolute inset-0 bg-gray-500/50" @click="$emit('update:modelValue', false)"></div>
 
@@ -45,6 +45,7 @@ defineProps({
     type: String,
     default: '취소',
   },
+  id: String
 })
 
 const emit = defineEmits(['update:modelValue', 'confirm'])
