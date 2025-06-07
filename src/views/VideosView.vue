@@ -88,12 +88,12 @@ const convertUTC2KST = (datetime: string | string[]): string => {
   let date;
   if (typeof datetime === 'object') {
     date = new Date(Date.UTC(
-      datetime[0],         // year
-      datetime[1] - 1,     // month (0-based)
-      datetime[2],         // day
-      datetime[3] || 0,    // hour
-      datetime[4] || 0,    // minute
-      datetime[5] || 0     // second
+      parseInt(datetime[0]),         // year
+      parseInt(datetime[1]) - 1,     // month (0-based)
+      parseInt(datetime[2]),         // day
+      parseInt(datetime[3]) || 0,    // hour
+      parseInt(datetime[4]) || 0,    // minute
+      parseInt(datetime[5]) || 0     // second
     ));
   }
   else {
