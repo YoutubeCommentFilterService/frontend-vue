@@ -8,6 +8,7 @@ export const useAuthStore = defineStore('auth', () => {
   const profileImage = ref<string>('')
   const hasYoutubeAccess = ref<boolean>(false)
   const channelId = ref<string>('')
+  const role = ref<string>('')
 
   const localStorageKey = 'auth-store'
 
@@ -16,6 +17,7 @@ export const useAuthStore = defineStore('auth', () => {
     nickname.value = profile.nickname
     profileImage.value = profile.profileImage
     hasYoutubeAccess.value = profile.hasYoutubeAccess
+    role.value = profile.role
   }
 
   const logout = () => {
@@ -23,12 +25,16 @@ export const useAuthStore = defineStore('auth', () => {
     nickname.value = ''
     profileImage.value = ''
     hasYoutubeAccess.value = false
+    role.value = ''
   }
 
   const profile = computed(() => ({
-    nickname: nickname.value || '로그인을 해주세요!',
+    nickname: nickname?.value
+                ? nickname?.value
+                : '연동을 해주세요!',
     profileImage: profileImage.value || '/default-user.svg',
     hasYoutubeAccess: hasYoutubeAccess.value || null,
+    role: role.value || null
   }))
 
   const backup = () => {
@@ -58,7 +64,11 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem(localStorageKey)
   }
 
-  return { isLoggedIn, login, logout, profile, backup, restore, clearLocalStorage }
+  return { 
+    isLoggedIn, login, logout, 
+    profile,
+    backup, restore, clearLocalStorage 
+  }
 })
 
 interface AuthJSONBackupData {
@@ -67,4 +77,5 @@ interface AuthJSONBackupData {
   profileImage: string
   hasYoutubeAccess: boolean
   channelId: string
+  role: string
 }

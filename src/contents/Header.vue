@@ -113,6 +113,13 @@
                 <div class="border-t border-gray-100 dark:border-gray-300 my-1"></div>
                 <div class="py-1 select-none text-sm">
                   <div
+                    v-if="authStore.profile.role == 'ADMIN'"
+                    @click="router.push('/admin')"
+                    class="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-500 cursor-pointer transition-colors"
+                  >
+                    <p>어드민 페이지</p>
+                  </div>
+                  <div
                     @click="reloginGoogle"
                     class="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-500 cursor-pointer transition-colors"
                   >

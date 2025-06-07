@@ -6,6 +6,7 @@ interface UserProfile {
     nickname: string;
     profileImage: string;
     hasYoutubeAccess: boolean;
+    role: string;
 }
 
 interface IsNewMember {
