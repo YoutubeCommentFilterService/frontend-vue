@@ -154,6 +154,7 @@
       message="정말 회원 탈퇴를 진행하시겠습니까? 이 작업은 되돌릴 수 없습니다."
       confirm-text="탈퇴"
       @confirm="confirmWithdraw"
+      id="member-withdraw"
     />
   </header>
 </template>

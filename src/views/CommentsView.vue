@@ -396,6 +396,7 @@ onMounted(async () => {
       message="정말 댓글 삭제를 진행하시겠습니까? 이 작업은 되돌릴 수 없습니다."
       confirm-text="삭제"
       @confirm="deleteSelectedItems"
+      id="comment-delete"
     />
     <div
       v-show="isDeleting"
