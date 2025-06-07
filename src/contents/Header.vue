@@ -117,6 +117,7 @@
                     @click="router.push('/admin')"
                     class="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-500 cursor-pointer transition-colors"
                   >
+                    <i class="pi pi-address-book mr-3 text-red-500 dark:text-red-400"></i>
                     <p>어드민 페이지</p>
                   </div>
                   <div
