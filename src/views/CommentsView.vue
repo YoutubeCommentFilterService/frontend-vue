@@ -198,7 +198,7 @@ const deleteSelectedItems = async () => {
   await Promise.all(
     Array.from({ length: Math.ceil(deleteTargetComments.length / 50) }, (_, idx) => {
       const deleteCommentsDto = deleteTargetComments.slice(idx * 50, (idx + 1) * 50)
-      return tokenAxiosInstance.delete('/api/youtube', {
+      return tokenAxiosInstance.delete('/api/youtube/comments', {
         data: {
           videoId: state.video.id,
           justDeleteComments: deleteCommentsDto,
