@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import type { UserInfo } from '@/types/user-info-interface';
 
-interface CustomProp extends UserInfo {
-    activeId: string
-}
-
-const props = defineProps<CustomProp>()
+defineProps<UserInfo>()
 </script>
 
 <template>
@@ -13,27 +9,26 @@ const props = defineProps<CustomProp>()
         <!-- Profile Image -->
         <td class="py-2">
             <div class="flex items-center justify-center">
-                <img :src="props.imageUrl" class="rounded-full size-10 text-center">
+                <img :src="imageUrl" class="rounded-full size-10 text-center">
             </div>
         </td>
 
         <!-- Nickname Handler -->
         <td class="content-center py-2">
-            <p class="w-60 text-center">{{ props.channelName }} || {{ props.handler }}</p>
+            <p class="w-60 text-center">{{ channelName }} / {{ handler || 'NO_HANDLER' }}</p>
         </td>
 
         <!-- Email -->
         <td class="content-center py-2">
-            <p class="w-80 text-center">{{ props.email }}</p>
+            <p class="w-80 text-center">{{ email }}</p>
         </td>
 
         <!-- User Handle Button -->
         <td class="content-center py-2">
             <div class="flex items-center justify-center relative">
-                <button data-btn class="cursor-pointer" :id="props.channelId">
-                    {{ props.role }}
+                <button data-btn class="cursor-pointer" :id="`${userId},${channelId || ''}`">
+                    {{ role }}
                 </button>
-                <!-- <HandleUserModal :id="props.channelId" v-if="isClicked"/> -->
             </div>
         </td>
     </tr>
