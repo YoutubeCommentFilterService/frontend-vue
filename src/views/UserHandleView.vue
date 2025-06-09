@@ -3,9 +3,14 @@ import { useAuthStore } from '@/stores/auth';
 import HandleUser from '@/components/admin/HandleUser.vue';
 import PageNavigator from '@/components/Commons/PageNavigator.vue';
 import ConfirmModal from '@/components/ConfirmModal.vue';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import type { UserInfo, UserInfoResponseData } from '@/types/user-info-interface';
 import { tokenAxiosInstance } from '@/utils';
+
+interface DeleteTargetId {
+    channelId: string;
+    userId: string;
+}
 
 const authStore = useAuthStore()
 
@@ -14,9 +19,11 @@ if (!authStore.isLoggedIn || "ADMIN" != authStore.profile.role) {
 }
 
 const currentPage = ref<number>(1)
-const totalPage = ref<number>(1)
-const totalMembers = ref<number>(1)
-const popupModalId = ref<string>('')
+const totalPaged = ref({
+    totalPages: 1,
+    totalMembers: 1
+})
+const deleteTargetId = ref<DeleteTargetId | null>(null)
 const popupPosition = ref({x: 0, y: 0})
 const showWithdrawModal = ref<boolean>(false)
 
@@ -32,31 +39,34 @@ const fetchUserData = async () => {
         })
     ).data;
 
-    console.log(data)
-
-    totalPage.value = data.totalPages;
-    totalMembers.value = data.totalMembers;
-
+    totalPaged.value = {
+        totalPages: data.totalPages,
+        totalMembers: data.totalMembers
+    }
     items.value = data.members;
 }
 
 const handleClickOutside = (event: MouseEvent) => {
-    event.stopPropagation()
+    // event.stopPropagation()
 
     const target = (event.target as HTMLElement).closest('[data-popup]')
     if (!target) {
-        popupModalId.value = '';
+        deleteTargetId.value = null;
     }
 }
 
 const handleClickHandlerButton = (event: MouseEvent) => {
-    event.stopPropagation()
+    // event.stopPropagation()
 
-    const target = event.target as HTMLElement
-    const targetParentBtn = target.closest('[data-btn]')
+    const targetParentBtn = (event.target as HTMLElement).closest('[data-btn]')
     if (targetParentBtn) {
-        const rect = targetParentBtn.getBoundingClientRect()
-        popupModalId.value = targetParentBtn.id;
+        const rect = targetParentBtn.getBoundingClientRect();
+        const [userId, channelId] = targetParentBtn.id.split(',');
+        deleteTargetId.value = {
+            channelId,
+            userId
+        }
+
         popupPosition.value = {
             x: rect.right - 2,
             y: rect.top + 10
@@ -64,20 +74,21 @@ const handleClickHandlerButton = (event: MouseEvent) => {
     }
 }
 
-
 const confirmWithdraw = async () => {
     await tokenAxiosInstance.delete('/api/admin', {
-        params: {
-            channelId: popupModalId.value
-        }
+        params: deleteTargetId.value
     })
     
     fetchUserData();
+    deleteTargetId.value = null;
 }
-const temp = () => {
-    console.log(popupModalId.value)
-    window.open(`https://youtube.com/channel/${popupModalId.value}`, 'popupWindow')
+
+const redirectToChannel = () => {
+    if (!deleteTargetId.value?.channelId) return;
+    window.open(`https://youtube.com/channel/${deleteTargetId.value.channelId}`, 'popupWindow')
 }
+
+watch(currentPage, () => { fetchUserData() })
 
 onMounted(() => {
     window.addEventListener('click', handleClickOutside)
@@ -109,10 +120,9 @@ onUnmounted(() => {
                 </thead>
                 <tbody v-if="items.length > 0">
                     <HandleUser 
-                        v-for="(item, idx) in items" 
-                        :key="idx" 
-                        v-bind="item" 
-                        :active-id="popupModalId"
+                        v-for="item in items" 
+                        :key="item.userId" 
+                        v-bind="item"
                     />
                 </tbody>
                 <tbody v-else class="flex-1">
@@ -126,7 +136,7 @@ onUnmounted(() => {
         </div>
         <div class="py-2">
             <PageNavigator 
-                :total-pages="totalPage"
+                :total-pages="totalPaged.totalPages"
                 v-model:current-page="currentPage"
             />
         </div>
@@ -135,10 +145,10 @@ onUnmounted(() => {
             class="fixed left-full top-1/2 -translate-y-1/2 ml-2 w-32 bg-amber-950 text-white rounded shadow z-50" 
             :style="`top: ${popupPosition.y}px; left: ${popupPosition.x}px`"
             data-popup
-            v-if="popupModalId !== ''"
+            v-if="deleteTargetId"
         >
             <ul class="select-none">
-                <li @click="temp" class="py-2 cursor-pointer">
+                <li @click="redirectToChannel" class="py-2 cursor-pointer">
                     채널로
                 </li>
                 <li @click="() => {showWithdrawModal = true}" class="py-2 cursor-pointer">

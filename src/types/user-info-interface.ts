@@ -1,10 +1,11 @@
 interface UserInfo {
-    handler: string;
-    channelId: string;
+    handler?: string | null;
+    channelId?: string | null;
     email: string;
     imageUrl: string;
-    channelName: string;
+    channelName?: string | null;
     role: string;
+    userId: string;
 }
 
 interface UserInfoResponseData {
