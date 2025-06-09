@@ -7,7 +7,7 @@ const props = defineProps<{
     totalPages: number,
 }>()
 
-const currentPage = ref<number>(0)
+const currentPage = ref<number>(1)
 const currentPageModel = defineModel('currentPage', { type: Number, default: 1 });
 
 const visiblePages = computed(() => {
@@ -48,7 +48,6 @@ const gotoPage = (page: number | string) => {
 <div class="select-none">
     <button 
         @click="gotoPage(1)" 
-        :disabled="currentPage <= 1 " 
         :class="{ 'cursor-pointer': currentPage > 1}"
         class="w-[20px] h-[40px]"
     >
@@ -56,7 +55,6 @@ const gotoPage = (page: number | string) => {
     </button>
     <button 
         @click="gotoPage(currentPage-1)" 
-        :disabled="currentPage <= 1" 
         :class="{ 'cursor-pointer': currentPage > 1}"
         class="w-[20px] h-[40px]"
     >
@@ -76,7 +74,6 @@ const gotoPage = (page: number | string) => {
 
     <button 
         @click="gotoPage(currentPage+1)" 
-        :disabled="currentPage === totalPages || currentPage === 0" 
         :class="{ 'cursor-pointer': currentPage < totalPages}"
         class="w-[20px] h-[40px]"
     >
@@ -84,7 +81,6 @@ const gotoPage = (page: number | string) => {
     </button>
     <button 
         @click="gotoPage(totalPages)" 
-        :disabled="currentPage === totalPages || currentPage === 0" 
         :class="{ 'cursor-pointer': currentPage < totalPages}"
         class="w-[20px] h-[40px]"
     >
