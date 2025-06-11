@@ -73,7 +73,7 @@ onMounted(() => {
   authStore.clearLocalStorage()
   if (refreshToken) {
     tokenAxiosInstance
-      .post<UserProfile>('/api/member/refresh-auth', { refreshToken })
+      .post<UserProfile>('/api/member/refresh-token', { refreshToken })
       .then(({ data }) => {
         authStore.login(data)
         videoStore.restore()

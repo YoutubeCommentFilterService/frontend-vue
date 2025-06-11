@@ -21,7 +21,7 @@ tokenAxiosInstance.interceptors.response.use(
     console.error(error)
 
     const originalRequest = error.config
-    if (originalRequest.url === '/api/member/refresh-auth') return Promise.reject(error)
+    if (originalRequest.url === '/api/member/refresh-token') return Promise.reject(error)
 
     if (originalRequest._retry) return Promise.reject(error)
     originalRequest._retry = true
@@ -31,7 +31,7 @@ tokenAxiosInstance.interceptors.response.use(
       if (!refreshToken) return Promise.reject(error)
 
       try {
-        await tokenAxiosInstance.post('/api/member/refresh-auth', { refreshToken })
+        await tokenAxiosInstance.post('/api/member/refresh-token', { refreshToken })
         const response = await tokenAxiosInstance.get('/api/member/refresh-token')
 
         localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN, response.data['refreshToken'])
