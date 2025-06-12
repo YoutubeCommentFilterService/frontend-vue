@@ -97,10 +97,11 @@ const handleUpdateRole = async (event: MouseEvent) => {
 
         if (response.status === 200) {
             items.value = items.value.map((item) => {
-                if (item.userId !== updateTarget.value.userId) return item;
+                if (item.userId !== updateTarget.value!.userId) return item;
                 item.role = role;
                 return item
             })
+            updateTarget.value.role = role;
         }
     } catch (e) {
         console.log(e)
@@ -210,7 +211,7 @@ onUnmounted(() => {
                 <li class="py-2" v-if="updateTarget.role != 'UNLINKED'">
                     권한 변경
                       <div class="bg-gray-500 py-0.5 divide-y grid grid-cols-1 content-center">
-                        <button v-for="role in availableRoles?.filter((role) => role != updateTarget.role)" :key="role"
+                        <button v-for="role in availableRoles?.filter((role) => role != updateTarget?.role)" :key="role"
                             class="text-black block cursor-pointer text-center"
                             @click="handleUpdateRole"
                         >
