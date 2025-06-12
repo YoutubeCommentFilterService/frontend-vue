@@ -66,23 +66,31 @@ const authStore = useAuthStore()
 const videoStore = useVideoStore()
 const themeStore = useThemeStore()
 
-onMounted(() => {
+interface CSRFToken {
+  headerName: string;
+  parameterName: string;
+  token: string;
+}
+
+onMounted(async () => {
+  const { data } = await tokenAxiosInstance.get<CSRFToken>('/api/csrf-token');
+  authStore.csrfToken = data.token
+
   const refreshToken: string | null = localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN)
   themeStore.loadTheme()
   authStore.restore()
   authStore.clearLocalStorage()
+
   if (refreshToken) {
-    tokenAxiosInstance
-      .post<UserProfile>('/api/member/refresh-token', { refreshToken })
-      .then(({ data }) => {
-        authStore.login(data)
-        videoStore.restore()
-      })
-      .catch(err => {
-        localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN)
-        authStore.logout()
-        videoStore.flush()
-      })
+    try {
+      const { data } = await tokenAxiosInstance.post<UserProfile>('/api/member/refresh-token', { refreshToken })
+      authStore.login(data)
+      videoStore.restore()
+    } catch (err) {
+      localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN)
+      authStore.logout()
+      videoStore.flush()
+    }
   }
 
   window.addEventListener('beforeunload', () => {

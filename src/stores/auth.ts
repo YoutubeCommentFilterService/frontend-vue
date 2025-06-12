@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('auth', () => {
   const hasYoutubeAccess = ref<boolean>(false)
   const channelId = ref<string>('')
   const role = ref<string>('')
+  const csrfToken = ref<string>('')
 
   const localStorageKey = 'auth-store'
 
@@ -66,7 +67,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   return { 
     isLoggedIn, login, logout, 
-    profile,
+    profile, csrfToken,
     backup, restore, clearLocalStorage 
   }
 })
