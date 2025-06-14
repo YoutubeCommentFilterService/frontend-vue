@@ -67,13 +67,16 @@ const videoStore = useVideoStore()
 const themeStore = useThemeStore()
 
 interface CSRFToken {
-  headerName: string;
-  parameterName: string;
-  token: string;
+  headerName: string
+  parameterName: string
+  token: string
 }
 
 onMounted(async () => {
-  const { data } = await tokenAxiosInstance.get<CSRFToken>('/api/csrf-token');
+  if (URL.parse(window.location.href).hostname == '127.0.0.1') {
+    window.location.href = 'http://localhost:5173'
+  }
+  const { data } = await tokenAxiosInstance.get<CSRFToken>('/api/csrf-token')
   authStore.csrfToken = data.token
 
   const refreshToken: string | null = localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN)
@@ -83,7 +86,9 @@ onMounted(async () => {
 
   if (refreshToken) {
     try {
-      const { data } = await tokenAxiosInstance.post<UserProfile>('/api/member/refresh-token', { refreshToken })
+      const { data } = await tokenAxiosInstance.post<UserProfile>('/api/member/refresh-token', {
+        refreshToken,
+      })
       authStore.login(data)
       videoStore.restore()
     } catch (err) {
