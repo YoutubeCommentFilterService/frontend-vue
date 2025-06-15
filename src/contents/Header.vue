@@ -178,8 +178,14 @@ const toggleTheme = () => {
   themeStore.toggleTheme()
 }
 
-const reloginGoogle = () => {
-  window.location.href = `${import.meta.env.VITE_BACKEND_URL}/oauth2/authorize/google`
+interface OAuthRedirectTo {
+  redirectTo: string
+}
+
+const reloginGoogle = async () => {
+  const { data } = await tokenAxiosInstance.get<OAuthRedirectTo>('/api/member/resync')
+  authStore.logout()
+  window.location.href = data.redirectTo
 }
 
 const navLinks = ref([
@@ -199,8 +205,8 @@ const confirmWithdraw = async () => {
 }
 
 const logout = async () => {
+  await tokenAxiosInstance.post('/api/member/logout')
   authStore.logout()
-  localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN)
   videoStore.flush()
   router.replace('/')
 }
@@ -214,7 +220,6 @@ const handleClickUserMenu = (event: MouseEvent) => {
 }
 
 const handleClickOutside = (event: MouseEvent) => {
-  event.stopPropagation()
   if (userMenu.value && !userMenu.value.contains(event.target as Node) && isUserMenuVisible.value) {
     isUserMenuVisible.value = false
   }
