@@ -73,7 +73,7 @@ interface CSRFToken {
 }
 
 onMounted(async () => {
-  if (URL.parse(window.location.href).hostname == '127.0.0.1') {
+  if (new URL(window.location.origin).hostname == '127.0.0.1') {
     window.location.href = 'http://localhost:5173'
   }
   const { data } = await tokenAxiosInstance.get<CSRFToken>('/api/csrf-token')
