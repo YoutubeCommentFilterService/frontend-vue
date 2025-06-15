@@ -22,13 +22,8 @@ const props = defineProps({
   },
 })
 
-const isLoading = ref(false)
 const showScrollToTop = ref(false)
-
-const currentPageModel = defineModel('isLoading', { type: Boolean, default: false });
-watch(isLoading, () => {
-  currentPageModel.value = isLoading.value
-})
+const isLoading = defineModel('isLoading', { default: false, required: true })
 
 const observer = ref<IntersectionObserver | null>(null)
 const infScrollPointer = ref(null)
@@ -36,27 +31,26 @@ const scrollContainer = ref<HTMLElement | null>(null)
 
 const observerCallback = async (entries: IntersectionObserverEntry[]) => {
   const [entry] = entries
-
+  let loadMore = false
   // 로딩 중이 아니고, 마지막 페이지가 아니며, 스크롤 포인터가 화면에 보일 때
   if (!isLoading.value && !props.isLast && entry.isIntersecting) {
+    isLoading.value = true
     try {
-      isLoading.value = true
+      loadMore = props.loadMoreItem ? await props.loadMoreItem() : false
 
-      const loadedMore = props.loadMoreItem ? await props.loadMoreItem() : false
-
-      if (!loadedMore) {
+      if (!loadMore) {
         if (observer.value && infScrollPointer.value) {
           observer.value.unobserve(infScrollPointer.value)
+          observer.value.disconnect()
         }
       }
     } catch (error) {
       console.error('Load more items error:', error)
     } finally {
       isLoading.value = false
-
       // 다음 렌더링 사이클에서 Observer 재설정
       await nextTick()
-      setupIntersectionObserver()
+      if (loadMore) setupIntersectionObserver()
     }
   }
 }
@@ -133,7 +127,10 @@ onUnmounted(() => {
     >
       <div class="p-2.5 flex-grow">
         <slot></slot>
-        <div v-if="isLoading" class="text-center flex flex-col items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <div
+          v-if="isLoading"
+          class="text-center flex flex-col items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        >
           <div
             class="w-10 h-10 border-4 border-t-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mb-2.5"
           ></div>
