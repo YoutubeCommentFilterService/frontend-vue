@@ -92,7 +92,6 @@ onMounted(async () => {
       authStore.login(data)
       videoStore.restore()
     } catch (err) {
-      localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN)
       authStore.logout()
       videoStore.flush()
     }

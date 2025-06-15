@@ -1,6 +1,7 @@
 import type { UserProfile } from '@/types/after-login-interface'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { LOCAL_STORAGE_REFRESH_TOKEN } from '@/utils'
 
 export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = ref(false)
@@ -27,15 +28,14 @@ export const useAuthStore = defineStore('auth', () => {
     profileImage.value = ''
     hasYoutubeAccess.value = false
     role.value = ''
+    localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN)
   }
 
   const profile = computed(() => ({
-    nickname: nickname?.value
-                ? nickname?.value
-                : '연동을 해주세요!',
+    nickname: nickname?.value ? nickname.value : '연동을 해주세요!',
     profileImage: profileImage.value || '/default-user.svg',
     hasYoutubeAccess: hasYoutubeAccess.value || null,
-    role: role.value || null
+    role: role.value || null,
   }))
 
   const backup = () => {
@@ -50,6 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
       }),
     )
   }
+
   const restore = () => {
     const savedState = localStorage.getItem(localStorageKey)
     if (savedState) {
@@ -61,14 +62,20 @@ export const useAuthStore = defineStore('auth', () => {
       channelId.value = states.channelId
     }
   }
+
   const clearLocalStorage = () => {
     localStorage.removeItem(localStorageKey)
   }
 
-  return { 
-    isLoggedIn, login, logout, 
-    profile, csrfToken,
-    backup, restore, clearLocalStorage 
+  return {
+    isLoggedIn,
+    login,
+    logout,
+    profile,
+    csrfToken,
+    backup,
+    restore,
+    clearLocalStorage,
   }
 })
 
