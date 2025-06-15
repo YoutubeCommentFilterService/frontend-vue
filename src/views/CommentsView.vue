@@ -14,6 +14,7 @@ import InfiniteScroll from '@/components/InfiniteScroll.vue'
 import CategorySelector from '@/components/comments-view/CategorySelector.vue'
 import CommentSelectorBtn from '@/components/comments-view/CommentSelectorBtn.vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'
+import CommentItem from '@/components/comments-view/CommentItem.vue'
 import { useRouter } from 'vue-router'
 
 const state = history.state as InterVideoListNComment
@@ -23,10 +24,11 @@ const commentItems = ref<CommentResource[]>([])
 const topLevelCommentIds = ref<Set<string>>(new Set<string>([]))
 const filteredItems = ref<CommentResource[]>([])
 const isLast = ref<boolean>(false)
-const nicknameCategories = ref<string[]>([])
-const commentCategories = ref<string[]>([])
+const category = ref<{
+  nickname: string[]
+  comment: string[]
+}>({ nickname: [], comment: [] })
 const pageNum = ref<number>(1)
-const isLoading = ref<boolean>(false)
 const isDeleting = ref<boolean>(false)
 const showWithdrawModal = ref<boolean>(false)
 const selectedCategories = ref<{
@@ -34,18 +36,14 @@ const selectedCategories = ref<{
   comment: string[]
 }>({ nickname: [], comment: [] })
 const selectedCommentDict = ref<Record<string, string>>({})
+const serverError = ref<boolean>(false)
 const selectedCommentIds = computed(() => Object.keys(selectedCommentDict.value))
 const selectedCommentCount = computed(() => selectedCommentIds.value.length)
 const hasSelectedComments = computed(() => selectedCommentCount.value > 0)
 
-const generatePTageTitle = (category: string[], prob: number[]): string => {
-  return category
-    .map((cat, idx) => `${cat}: ${String(Math.round(prob[idx] * 100)).padStart(3, ' ')}%`)
-    .join(',')
-}
+const isLoading = ref<boolean>(false)
 
 const fetchComments = async (page: number, take: number = 100, isLast: boolean = false) => {
-  isLoading.value = true
   if (!isLast) {
     const response = await tokenAxiosInstance.get<CommentResponseData>(
       `/api/youtube/videos/${state.video.id}`,
@@ -56,47 +54,65 @@ const fetchComments = async (page: number, take: number = 100, isLast: boolean =
         },
       },
     )
-    isLoading.value = false
     return response.data
   }
-  isLoading.value = false
   return
+}
+
+const fetchCategories = async () => {
+  const { data } = await tokenAxiosInstance.get<PredictCategory>('/api/metadata/predict-class')
+  const categories = data
+  category.value = {
+    nickname: categories.nicknameCategories || [],
+    comment: categories.commentCategories || [],
+  }
+
+  serverError.value = data.predictCommonResponse.code === 500 ? true : false
 }
 
 const maxFetchNum = 100
 const loadMoreItem = async () => {
+  await fetchCategories()
+  if (serverError.value) return false
+
   try {
     const data = await fetchComments(pageNum.value, maxFetchNum, isLast.value)
 
     if (data) {
       if (data.predictCommonResponse.code < 400) {
+        serverError.value = false
         isLast.value = data.isLast === 'Y' ? true : false
         commentItems.value = [...commentItems.value, ...data.items]
         pageNum.value += 1
         filteredItems.value = commentItems.value
         topLevelCommentIds.value = new Set([
-          ...topLevelCommentIds.value, 
-          ...data.items
-            .filter(item => item.id.length === 26)
-            .map(item => item.id)
+          ...topLevelCommentIds.value,
+          ...data.items.filter((item) => item.id.length === 26).map((item) => item.id),
         ])
         return true
-      } else {
-        isLast.value = true
-        return true
       }
+      return true
+    } else {
+      isLast.value = true
+      commentItems.value = []
+      filteredItems.value = []
+      topLevelCommentIds.value = new Set([])
+      serverError.value = true
     }
-    return false
   } catch (err) {
     console.error(err)
-    return false
   }
+  return false
 }
 
 const refreshItem = async () => {
+  commentItems.value = filteredItems.value = []
+  selectedCommentDict.value = {}
+
+  await fetchCategories()
+  if (serverError.value) return
+
   try {
-    commentItems.value = filteredItems.value = []
-    selectedCommentDict.value = {}
     const data = await fetchComments(1, maxFetchNum, false)
     if (data) {
       isLast.value = data.isLast === 'Y' ? true : false
@@ -149,12 +165,12 @@ const toggleItemSelection = (itemId: string, channelId: string) => {
     const updateDict: Record<string, string> = {}
     updateDict[itemId] = channelId
     if (itemId.length === 26) {
-      const filtered = commentItems.value.filter(x => x.id.startsWith(itemId))
-      filtered.forEach(item => updateDict[item.id] = item.channelId)
+      const filtered = commentItems.value.filter((x) => x.id.startsWith(itemId))
+      filtered.forEach((item) => (updateDict[item.id] = item.channelId))
     }
     selectedCommentDict.value = {
       ...selectedCommentDict.value,
-      ...updateDict
+      ...updateDict,
     }
   }
 }
@@ -255,11 +271,7 @@ onMounted(async () => {
     router.replace('/')
   }
 
-  const response = await tokenAxiosInstance.get<PredictCategory>('/api/metadata/predict-class')
-  const categories = response.data
-
-  nicknameCategories.value = categories.nicknameCategories
-  commentCategories.value = categories.commentCategories
+  await fetchCategories()
 })
 </script>
 
@@ -298,7 +310,7 @@ onMounted(async () => {
       <div class="sticky top-0 z-10 px-4 shadow-md rounded-b-lg">
         <div class="flex items-center flex-wrap gap-2 my-2 py-1.5 overflow-x-auto">
           <CategorySelector
-            :categoryArray="nicknameCategories.slice(1)"
+            :categoryArray="category.nickname.slice(1)"
             categoryName="닉네임"
             categoryType="nickname"
             :toggleCategory="toggleCategory"
@@ -306,7 +318,7 @@ onMounted(async () => {
           />
           <div class="flex w-5"></div>
           <CategorySelector
-            :categoryArray="commentCategories.slice(1)"
+            :categoryArray="category.comment.slice(1)"
             categoryName="댓글"
             categoryType="comment"
             :toggleCategory="toggleCategory"
@@ -317,8 +329,8 @@ onMounted(async () => {
         <div class="flex items-center flex-wrap gap-2 my-2 py-1.5">
           <span class="inline-block w-10 font-semibold text-gray-800">선택</span>
           <div class="flex gap-2">
-            <CommentSelectorBtn :onClick="selectAllItems" text="전체 선택" />
-            <CommentSelectorBtn :onClick="deselectAllItems" text="전체 해제" />
+            <CommentSelectorBtn @click="selectAllItems" text="전체 선택" />
+            <CommentSelectorBtn @click="deselectAllItems" text="전체 해제" />
             <button
               @click="() => (showWithdrawModal = true)"
               class="px-2 py-1 rounded text-sm transition-all duration-200 ease-in-out"
@@ -344,48 +356,32 @@ onMounted(async () => {
         :load-more-item="loadMoreItem"
         :refresh-item="refreshItem"
         spinner-text="댓글 목록을 불러오는 중입니다!!"
+        v-model:is-loading="isLoading"
       >
         <div class="flex h-full w-full">
-          <div v-if="filteredItems.length > 0" class="flex-grow">
-            <div
-              v-for="item in filteredItems"
-              :key="item.id"
-              class="flex items-center gap-4 my-2 p-3 rounded-lg shadow-sm transition-all duration-300 ease-in-out border border-gray-200 transform hover:translate-y-[-2px] hover:shadow-lg hover:border-gray-300"
-              :class="{
-                'bg-blue-50 border-l-2 border-[#3b82f6] shadow-md': selectedCommentIds.includes(
-                  item.id,
-                ),
-                'dark:bg-gray-400': !selectedCommentIds.includes(item.id),
-                'ml-5': !item.isTopLevel && topLevelCommentIds.has(item.id.split('.')[0]),
-              }"
-              @click="toggleItemSelection(item.id, item.channelId)"
-            >
-              <img
-                :src="item.profileImage"
-                width="75px"
-                height="75px"
-                class="flex-shrink-0 rounded-full object-cover border-2 border-[#f3f3f3]"
+          <div v-if="!isLoading" class="flex h-full w-full">
+            <div v-if="filteredItems.length > 0 && !serverError" class="flex-grow">
+              <CommentItem
+                v-for="item in filteredItems"
+                :key="item.id"
+                @click="toggleItemSelection(item.id, item.channelId)"
+                :item="item"
+                :is-selected="selectedCommentIds.includes(item.id)"
+                :is-exist-top-level-comment="topLevelCommentIds.has(item.id.split('.')[0])"
+                :category="category"
               />
-              <div
-                class="flex flex-col justify-center flex-grow text-sm text-gray-800 cursor-default"
-              >
-                <p
-                  :title="generatePTageTitle(nicknameCategories, item.nicknameProb)"
-                  class="mb-0.5 font-semibold"
-                >
-                  {{ item.nickname }}({{ item.nicknamePredict }})
-                </p>
-                <p :title="generatePTageTitle(commentCategories, item.commentProb)" class="mb-0.5">
-                  {{ item.comment }}({{ item.commentPredict }})
-                </p>
+            </div>
+            <div
+              v-else
+              class="flex flex-grow text-xl bg-[#ecf0f1] rounded-lg p-5 justify-center items-center"
+            >
+              <div v-if="serverError" class="m-0 font-bold text-[#fc6600] select-none">
+                추론 서버가 고장났습니다. 관리자에게 연락주세요!
+              </div>
+              <div v-else class="m-0 font-bold text-[#bdc3c7] select-none">
+                댓글이 존재하지 않습니다
               </div>
             </div>
-          </div>
-          <div
-            v-if="!isLoading && isLast && filteredItems.length === 0"
-            class="flex flex-grow text-xl bg-[#ecf0f1] rounded-lg p-5 justify-center items-center"
-          >
-            <div class="m-0 font-bold text-[#bdc3c7] select-none">댓글이 존재하지 않습니다</div>
           </div>
         </div>
       </InfiniteScroll>

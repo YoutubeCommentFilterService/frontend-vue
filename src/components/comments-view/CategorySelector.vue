@@ -1,5 +1,5 @@
 <template>
-  <div v-if="categoryArray.length">
+  <div v-if="categoryArray && categoryArray.length">
     <div class="font-semibold">{{ categoryName }}</div>
     <div class="flex gap-2">
       <button
@@ -20,7 +20,7 @@
 <script lang="ts" setup>
 defineProps({
   categoryArray: {
-    type: Array,
+    type: Array || undefined || null,
     required: true,
   },
   categoryName: {
