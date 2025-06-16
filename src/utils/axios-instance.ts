@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance } from 'axios'
 import { useAuthStore } from '@/stores/auth'
 
-const LOCAL_STORAGE_REFRESH_TOKEN = 'refresh_token'
+const LOCAL_STORAGE_REFRESH_TOKEN = 'refresh-token'
 
 const tokenAxiosInstance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -13,10 +13,10 @@ const tokenAxiosInstance: AxiosInstance = axios.create({
 
 tokenAxiosInstance.interceptors.request.use(
   (config) => {
-    const authStore = useAuthStore();
-    const csrfToken = authStore.csrfToken;
+    const authStore = useAuthStore()
+    const csrfToken = authStore.csrfToken
     if (csrfToken) {
-      config.headers['X-XSRF-TOKEN'] = csrfToken;
+      config.headers['X-XSRF-TOKEN'] = csrfToken
     }
     return config
   },
