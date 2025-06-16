@@ -1,7 +1,7 @@
 import type { UserProfile } from '@/types/after-login-interface'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { LOCAL_STORAGE_REFRESH_TOKEN } from '@/utils'
+import { LOCAL_STORAGE_REFRESH_TOKEN } from '@/utils/axios-instance'
 
 export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = ref(false)

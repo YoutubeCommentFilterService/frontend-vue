@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import type { AfterLoginDto, IsNewMember } from '@/types/after-login-interface'
-import { LOCAL_STORAGE_REFRESH_TOKEN, tokenAxiosInstance } from '@/utils'
+import { LOCAL_STORAGE_REFRESH_TOKEN, tokenAxiosInstance } from '@/utils/axios-instance'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import ConcenredPrivacyGoogle from '@/components/ConcernedPrivacyGoogle.vue'
@@ -53,12 +53,10 @@ onMounted(async () => {
 })
 
 const submitConsent = async () => {
-  await tokenAxiosInstance
-    .post<AfterLoginDto>('/api/member/accept-signin')
-    .then(async () => {
-      await getRefreshToken()
-      router.push('/')
-    })
+  await tokenAxiosInstance.post<AfterLoginDto>('/api/member/accept-signin').then(async () => {
+    await getRefreshToken()
+    router.push('/')
+  })
 }
 
 const rejectConsent = async () => {

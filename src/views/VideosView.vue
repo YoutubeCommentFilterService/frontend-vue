@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { tokenAxiosInstance } from '@/utils'
+import { tokenAxiosInstance } from '@/utils/axios-instance'
 import { useVideoStore } from '@/stores/video'
 
 import type { VideoResponseData, VideoResource } from '@/types/video-interface'

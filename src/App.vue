@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import Header from '@/contents/Header.vue'
-import { tokenAxiosInstance, LOCAL_STORAGE_REFRESH_TOKEN } from '@/utils'
+import { tokenAxiosInstance, LOCAL_STORAGE_REFRESH_TOKEN } from '@/utils/axios-instance'
 import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useVideoStore } from '@/stores/video'

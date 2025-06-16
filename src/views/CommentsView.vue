@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import { computed, onMounted, ref } from 'vue'
-import { tokenAxiosInstance } from '@/utils'
+import { tokenAxiosInstance } from '@/utils/axios-instance'
 import type {
   CommentDeleteRequestData,
   CommentResource,
