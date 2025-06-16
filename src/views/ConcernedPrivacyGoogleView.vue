@@ -4,5 +4,5 @@
   </div>
 </template>
 <script lang="ts" setup>
-import ConcenredPrivacyGoogle from '@/components/ConcernedPrivacyGoogle.vue';
+import ConcenredPrivacyGoogle from '@/components/ConcernedPrivacyGoogle.vue'
 </script>

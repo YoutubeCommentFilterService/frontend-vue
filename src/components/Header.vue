@@ -162,7 +162,7 @@
 
 <script setup lang="ts">
 import ConfirmModal from '@/components/ConfirmModal.vue'
-import { tokenAxiosInstance, LOCAL_STORAGE_REFRESH_TOKEN } from '@/utils/axios-instance'
+import { tokenAxiosInstance } from '@/utils/axios-instance'
 import { useAuthStore } from '@/stores/auth'
 import { useVideoStore } from '@/stores/video'
 import { useRouter } from 'vue-router'

@@ -1,16 +1,16 @@
 interface AfterLoginDto extends UserProfile {
-    refreshToken: string;
+  refreshToken: string
 }
 
 interface UserProfile {
-    nickname: string;
-    profileImage: string;
-    hasYoutubeAccess: boolean;
-    role: string;
+  nickname: string
+  profileImage: string
+  hasYoutubeAccess: boolean
+  role: string
 }
 
 interface IsNewMember {
-    isNewMember: boolean;
+  isNewMember: boolean
 }
 
-export type { AfterLoginDto, UserProfile, IsNewMember };
+export type { AfterLoginDto, UserProfile, IsNewMember }

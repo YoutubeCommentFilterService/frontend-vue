@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import Header from '@/contents/Header.vue'
+import Header from '@/components/Header.vue'
 import { tokenAxiosInstance, LOCAL_STORAGE_REFRESH_TOKEN } from '@/utils/axios-instance'
 import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'

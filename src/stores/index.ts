@@ -1,4 +1,4 @@
-import { useAuthStore } from "./auth";
-import { useVideoStore } from "./video";
+import { useAuthStore } from './auth'
+import { useVideoStore } from './video'
 
-export default { useAuthStore, useVideoStore };
+export default { useAuthStore, useVideoStore }

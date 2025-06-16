@@ -260,11 +260,10 @@ const getLabel = (key: string) => {
   }
 }
 
-const { id, title, description, publishedAt } = state.video
+const { id, title, publishedAt } = state.video
 const videoDetails = {
   title,
   publishedAt,
-  // description,
 }
 
 const moveToYoutube = (baseUrl: string) => {

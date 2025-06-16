@@ -45,7 +45,7 @@ defineProps({
     type: String,
     default: '취소',
   },
-  id: String
+  id: String,
 })
 
 const emit = defineEmits(['update:modelValue', 'confirm'])

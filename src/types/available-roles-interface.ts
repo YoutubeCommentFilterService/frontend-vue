@@ -1,5 +1,5 @@
 interface AvailableRoles {
-    availableRoles: string[]
+  availableRoles: string[]
 }
 
-export type { AvailableRoles };
+export type { AvailableRoles }
