@@ -37,6 +37,7 @@ const selectedCategories = ref<{
 }>({ nickname: [], comment: [] })
 const selectedCommentDict = ref<Record<string, string>>({})
 const serverError = ref<boolean>(false)
+const videoForbidden = ref<boolean>(false)
 const selectedCommentIds = computed(() => Object.keys(selectedCommentDict.value))
 const selectedCommentCount = computed(() => selectedCommentIds.value.length)
 const hasSelectedComments = computed(() => selectedCommentCount.value > 0)
@@ -79,7 +80,8 @@ const loadMoreItem = async () => {
     const data = await fetchComments(pageNum.value, maxFetchNum, isLast.value)
 
     if (data) {
-      if (data.predictCommonResponse.code < 400) {
+      const responseCode = data.predictCommonResponse.code
+      if (responseCode < 400) {
         serverError.value = false
         isLast.value = data.isLast === 'Y' ? true : false
         commentItems.value = [...commentItems.value, ...data.items]
@@ -89,7 +91,12 @@ const loadMoreItem = async () => {
           ...topLevelCommentIds.value,
           ...data.items.filter((item) => item.id.length === 26).map((item) => item.id),
         ])
-        return true
+      } else if (responseCode == 403) {
+        isLast.value = true
+        videoForbidden.value = true
+        commentItems.value = []
+        filteredItems.value = []
+        topLevelCommentIds.value = new Set([])
       }
       return true
     } else {
@@ -378,7 +385,10 @@ onMounted(async () => {
               <div v-if="serverError" class="m-0 font-bold text-[#fc6600] select-none">
                 추론 서버가 고장났습니다. 관리자에게 연락주세요!
               </div>
-              <div v-else class="m-0 font-bold text-[#bdc3c7] select-none">
+              <div v-else-if="videoForbidden" class="m-0 font-bold text-[#fc6600] select-none">
+                댓글이 막힌 영상입니다. 접근이 불가능합니다.
+              </div>
+              <div v-else class="m-0 font-bold text-[#fc6600] select-none">
                 댓글이 존재하지 않습니다
               </div>
             </div>
