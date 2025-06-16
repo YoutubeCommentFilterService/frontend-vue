@@ -198,7 +198,8 @@ const showWithdrawModal = ref(false)
 const confirmWithdraw = async () => {
   try {
     await tokenAxiosInstance.delete('/api/member')
-    await logout()
+    clearMemberInfo()
+    router.replace('/')
   } catch (err) {
     console.error(err)
   }
@@ -206,9 +207,13 @@ const confirmWithdraw = async () => {
 
 const logout = async () => {
   await tokenAxiosInstance.post('/api/member/logout')
+  clearMemberInfo()
+  router.replace('/')
+}
+
+const clearMemberInfo = () => {
   authStore.logout()
   videoStore.flush()
-  router.replace('/')
 }
 
 const isUserMenuVisible = ref<boolean>(false)
