@@ -107,7 +107,7 @@ const loadMoreItem = async () => {
       serverError.value = true
     }
   } catch (err) {
-    console.error(err)
+    if (import.meta.env.VITE_IS_DEV === 't') console.error(err)
   }
   return false
 }
@@ -128,7 +128,7 @@ const refreshItem = async () => {
       filteredItems.value = commentItems.value
     }
   } catch (err) {
-    console.error(err)
+    if (import.meta.env.VITE_IS_DEV === 't') console.error(err)
   }
 }
 

@@ -55,6 +55,7 @@ tokenAxiosInstance.interceptors.response.use(
 
         return tokenAxiosInstance(error.config)
       } catch (err) {
+        if (import.meta.env.VITE_IS_DEV === 't') console.error(err)
         return Promise.reject(error)
       }
     }

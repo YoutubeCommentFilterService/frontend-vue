@@ -91,6 +91,7 @@ onMounted(async () => {
       authStore.login(data)
       videoStore.restore()
     } catch (err) {
+      if (import.meta.env.VITE_IS_DEV === 't') console.error(err)
       authStore.logout()
       videoStore.flush()
     }

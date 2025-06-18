@@ -26,7 +26,7 @@ const withdrawService = async () => {
     await tokenAxiosInstance.delete('/member')
     await logout()
   } catch (err) {
-    console.log(err)
+    if (import.meta.env.VITE_IS_DEV === 't') console.error(err)
   }
 }
 

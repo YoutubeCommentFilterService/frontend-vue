@@ -46,7 +46,8 @@ onMounted(async () => {
     })
     if (data.isNewMember === true) isNewMember.value = data.isNewMember
     else await getRefreshToken()
-  } catch (e) {
+  } catch (err) {
+    if (import.meta.env.VITE_IS_DEV === 't') console.error(err)
     // TODO: 추후 home으로 이동
     isNewMember.value = true
   }
@@ -74,6 +75,8 @@ const getRefreshToken = async () => {
       authStore.login(data)
       router.push('/')
     })
-    .catch((err) => console.error(err))
+    .catch((err) => {
+      if (import.meta.env.VITE_BACKEND_URL) console.error(err)
+    })
 }
 </script>

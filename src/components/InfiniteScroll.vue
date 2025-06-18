@@ -44,8 +44,8 @@ const observerCallback = async (entries: IntersectionObserverEntry[]) => {
           observer.value.disconnect()
         }
       }
-    } catch (error) {
-      console.error('Load more items error:', error)
+    } catch (err) {
+      if (import.meta.env.VITE_IS_DEV === 't') console.error(err)
     } finally {
       isLoading.value = false
       // 다음 렌더링 사이클에서 Observer 재설정
@@ -77,8 +77,8 @@ const refreshItems = async () => {
   try {
     isLoading.value = true
     if (props.refreshItem) await props.refreshItem()
-  } catch (error) {
-    console.error('Refresh items error:', error)
+  } catch (err) {
+    if (import.meta.env.VITE_IS_DEV === 't') console.error(err)
   } finally {
     isLoading.value = false
   }

@@ -68,7 +68,7 @@ const loadMoreItem = async () => {
       return true
     }
   } catch (err) {
-    console.error(err)
+    if (import.meta.env.VITE_IS_DEV === 't') console.error(err)
   }
   return false
 }

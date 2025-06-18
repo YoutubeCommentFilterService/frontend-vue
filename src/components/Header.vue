@@ -201,7 +201,7 @@ const confirmWithdraw = async () => {
     clearMemberInfo()
     router.replace('/')
   } catch (err) {
-    console.error(err)
+    if (import.meta.env.VITE_IS_DEV === 't') console.error(err)
   }
 }
 

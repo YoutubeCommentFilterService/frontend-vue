@@ -103,8 +103,8 @@ const handleUpdateRole = async (event: MouseEvent) => {
       })
       updateTarget.value.role = role
     }
-  } catch (e) {
-    console.log(e)
+  } catch (err) {
+    if (import.meta.env.VITE_IS_DEV === 't') console.error(err)
   }
 }
 
