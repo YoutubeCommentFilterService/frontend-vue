@@ -85,7 +85,7 @@ onMounted(async () => {
 
   if (refreshToken) {
     try {
-      const { data } = await tokenAxiosInstance.post<UserProfile>('/api/member/refresh-token', {
+      const { data } = await tokenAxiosInstance.post<UserProfile>('/api/member/renew-token', {
         refreshToken,
       })
       authStore.login(data)

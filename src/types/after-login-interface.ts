@@ -7,6 +7,7 @@ interface UserProfile {
   profileImage: string
   hasYoutubeAccess: boolean
   role: string
+  refreshToken: string
 }
 
 interface IsNewMember {

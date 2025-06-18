@@ -20,6 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
     profileImage.value = profile.profileImage
     hasYoutubeAccess.value = profile.hasYoutubeAccess
     role.value = profile.role
+    localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN, profile.refreshToken)
   }
 
   const logout = () => {
@@ -71,7 +72,7 @@ export const useAuthStore = defineStore('auth', () => {
     profile,
     csrfToken,
     backup,
-    restore
+    restore,
   }
 })
 

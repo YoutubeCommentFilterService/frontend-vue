@@ -71,7 +71,6 @@ const getRefreshToken = async () => {
     .get<AfterLoginDto>('/api/member/refresh-token')
     .then((res) => res.data)
     .then((data) => {
-      localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN, data.refreshToken)
       authStore.login(data)
       router.push('/')
     })

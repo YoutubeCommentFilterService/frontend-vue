@@ -1,5 +1,6 @@
 import axios, { AxiosError, type AxiosInstance } from 'axios'
 import { useAuthStore } from '@/stores/auth'
+import type { UserProfile } from '@/types/after-login-interface'
 
 const LOCAL_STORAGE_REFRESH_TOKEN = 'refresh-token'
 
@@ -48,10 +49,9 @@ tokenAxiosInstance.interceptors.response.use(
       }
 
       try {
-        await tokenAxiosInstance.post('/api/member/refresh-token', { refreshToken })
-        const response = await tokenAxiosInstance.get('/api/member/refresh-token')
-
-        localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN, response.data['refreshToken'])
+        await tokenAxiosInstance.post<UserProfile>('/api/member/renew-token', { refreshToken })
+        const { data } = await tokenAxiosInstance.get<UserProfile>('/api/member/refresh-token')
+        localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN, data.refreshToken)
 
         return tokenAxiosInstance(error.config)
       } catch (err) {
