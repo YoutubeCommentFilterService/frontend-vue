@@ -82,7 +82,6 @@ onMounted(async () => {
   const refreshToken: string | null = localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN)
   themeStore.loadTheme()
   authStore.restore()
-  authStore.clearLocalStorage()
 
   if (refreshToken) {
     try {

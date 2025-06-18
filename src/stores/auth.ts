@@ -61,9 +61,6 @@ export const useAuthStore = defineStore('auth', () => {
       hasYoutubeAccess.value = states.hasYoutubeAccess
       channelId.value = states.channelId
     }
-  }
-
-  const clearLocalStorage = () => {
     localStorage.removeItem(localStorageKey)
   }
 
@@ -74,8 +71,7 @@ export const useAuthStore = defineStore('auth', () => {
     profile,
     csrfToken,
     backup,
-    restore,
-    clearLocalStorage,
+    restore
   }
 })
 
