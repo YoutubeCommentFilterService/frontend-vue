@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from 'axios'
+import axios, { AxiosError, type AxiosInstance } from 'axios'
 import { useAuthStore } from '@/stores/auth'
 
 const LOCAL_STORAGE_REFRESH_TOKEN = 'refresh-token'
@@ -26,17 +26,26 @@ tokenAxiosInstance.interceptors.request.use(
 tokenAxiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    console.error(error)
+    const authStore = useAuthStore()
 
     const originalRequest = error.config
-    if (originalRequest.url === '/api/member/refresh-token') return Promise.reject(error)
+    if (
+      originalRequest?.url === '/api/member/refresh-token' &&
+      originalRequest?.method?.toLocaleLowerCase() === 'get'
+    ) {
+      authStore.logout()
+      return Promise.reject(error)
+    }
 
-    if (originalRequest._retry) return Promise.reject(error)
+    if (originalRequest?._retry) return Promise.reject(error)
     originalRequest._retry = true
 
     if (error.response?.status === 401) {
       const refreshToken: string | null = localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN)
-      if (!refreshToken) return Promise.reject(error)
+      if (!refreshToken) {
+        authStore.logout()
+        return Promise.reject(error)
+      }
 
       try {
         await tokenAxiosInstance.post('/api/member/refresh-token', { refreshToken })
