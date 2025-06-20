@@ -12,7 +12,7 @@
             :key="category"
             @click="
               (event) => {
-                if (!isDragging && event.target === dragStartRef) clicked(event, category)
+                if (!isDragging && !dragStartRef) clicked(event, category)
               }
             "
             class="select-none cursor-pointer"
@@ -81,7 +81,8 @@ const scrollToUp = () => {
 
 const clicked = (event: MouseEvent, category: string) => {
   scrollToUp()
-  selectedCategory.value = category
+  if ((event.target as HTMLElement).innerText !== selectedCategory.value)
+    selectedCategory.value = category
 }
 
 let isDown = false
