@@ -26,4 +26,4 @@ interface HotVideosResponse {
   itemMap: HotVideoDisplayResource
 }
 
-export type { HotVideoData, HotVideoDisplayResource as CommentDisplayResource, HotVideosResponse }
+export type { HotVideoData, HotVideoDisplayResource, HotVideosResponse }
