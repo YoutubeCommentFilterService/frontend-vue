@@ -2,7 +2,7 @@
   <div
     v-for="(item, idx) in items"
     :key="item.videoId"
-    class="mt-2 flex flex-row select-none gap-2"
+    class="my-2 flex flex-row select-none gap-2"
     :class="{ 'bg-white': authStore.channelId === item.channelId }"
   >
     <div class="flex items-center min-w-7 max-w-7">
@@ -52,7 +52,7 @@
           </div>
         </div>
 
-        <p class="text-xs line-clamp-3">
+        <p class="text-xs line-clamp-2 wrap-break-word">
           {{ item.tags }}
         </p>
       </div>
@@ -76,14 +76,12 @@ const convertTimeFormat = (utcTime: string) => {
 
   const options = { timeZone: 'Asia/Seoul' }
   const localDate = new Date(date.toLocaleString('en-US', options))
-
-  const yyyy = localDate.getFullYear()
   const mm = pad(localDate.getMonth() + 1)
   const dd = pad(localDate.getDate())
   const hh = pad(localDate.getHours())
   const mi = pad(localDate.getMinutes())
 
-  return `${yyyy}-${mm}-${dd} ${hh}:${mi}`
+  return `${mm}-${dd} ${hh}:${mi}`
 }
 
 const moveToYoutube = (type: string, ids: string) => {
