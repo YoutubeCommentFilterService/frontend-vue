@@ -12,7 +12,7 @@
             :key="category"
             @click="
               (event) => {
-                if (!isDragging && !dragStartRef) clicked(event, category)
+                if (!isDragging && event.target === dragStartRef) clicked(event, category)
               }
             "
             class="select-none cursor-pointer"
