@@ -40,22 +40,21 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, onBeforeUnmount } from 'vue'
 import { tokenAxiosInstance } from '@/utils/axios-instance'
-import type { HotVideosResponse, HotVideoDisplayResource } from '@/types/hot-videos-interface.ts'
+import type { HotVideosResponse, HotVideoDisplayResource } from '@/types/hot-videos-insterface'
 import HotVideoItem from '@/components/hot-videos/HotVideoItem.vue'
 
-const categoryHeaderRef = ref(null)
-const dragStartRef = ref(null)
-const scrollableRef = ref(null)
+const categoryHeaderRef = ref<HTMLElement | null>(null)
+const dragStartRef = ref<EventTarget | null>(null)
+const scrollableRef = ref<HTMLElement | null>(null)
 const baseTime = ref<number>(0)
 const videos = ref<HotVideoDisplayResource>({ '': { items: [], key: -1 } })
 const selectedCategory = ref<string>('')
 const categories = computed(() =>
-  Object.entries(videos.value)
-    .sort(([, a], [, b]) => a.key - b.key)
+  Object.entries(videos.value as Record<string, { key: number }>)
+    .sort(([aKey, aVal], [bKey, bVal]) => aVal.key - bVal.key)
     .map(([category]) => category),
 )
 const isRunning = ref<boolean>(false)
-let renewHourDiffIntervalId
 const checkNewVideoFetchTime = async () => {
   const hourDiff = (Date.now() - baseTime.value) / (1000 * 60 * 60)
   if (isRunning.value) return
@@ -68,22 +67,19 @@ const checkNewVideoFetchTime = async () => {
 const getHotVideos = async () => {
   const { data } = await tokenAxiosInstance.get<HotVideosResponse>('/api/youtube/hot-videos')
   baseTime.value = new Date(data.baseTime).getTime()
-  videos.value = Object.fromEntries(
-    Object.entries(data.itemMap).map(([key, value]) => [
-      key.split(':')[1],
-      { items: value, key: parseInt(key.split(':')[0]) },
-    ]),
-  )
+  videos.value = data.itemMap
 }
 
 const scrollToUp = () => {
-  scrollableRef.value.scrollTo({
-    top: 0,
-    behavior: 'smooth',
-  })
+  if (scrollableRef.value) {
+    scrollableRef.value.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    })
+  }
 }
 
-const clicked = (event, category: string) => {
+const clicked = (event: MouseEvent, category: string) => {
   scrollToUp()
   selectedCategory.value = category
 }
@@ -96,16 +92,18 @@ onMounted(async () => {
   const el = categoryHeaderRef.value
   await getHotVideos()
   selectedCategory.value = '전체'
-  renewHourDiffIntervalId = setInterval(checkNewVideoFetchTime, 60 * 1000)
+  const renewHourDiffIntervalId = setInterval(checkNewVideoFetchTime, 60 * 1000)
 
   if (!el) return
 
   const mouseDown = (e: MouseEvent) => {
     isDown = true
     isDragging = false
-    el.classList.add('cursor-grabbing')
-    startX = e.pageX - el.offsetLeft
-    scrollLeft = el.scrollLeft
+    if (el) {
+      el.classList.add('cursor-grabbing')
+      startX = e.pageX - el.offsetLeft
+      scrollLeft = el.scrollLeft
+    }
     dragStartRef.value = e.target
   }
 
@@ -115,7 +113,7 @@ onMounted(async () => {
       e.stopPropagation()
       e.preventDefault()
     }
-    el.classList.remove('cursor-grabbing')
+    if (el) el.classList.remove('cursor-grabbing')
   }
 
   const mouseMove = (e: MouseEvent) => {
@@ -123,26 +121,31 @@ onMounted(async () => {
     const walk = e.pageX - startX
     if (Math.abs(walk) > 5) {
       isDragging = true
-      el.scrollLeft = scrollLeft - walk
+      if (el) el.scrollLeft = scrollLeft - walk
     }
     dragStartRef.value = null
   }
 
-  const listeners = [
-    { type: 'mousedown', func: mouseDown },
-    { type: 'mouseleave', func: mouseLeaveOrUp },
-    { type: 'mouseup', func: mouseLeaveOrUp },
-    { type: 'mousemove', func: mouseMove },
-  ]
+  const wheelMove = (e: WheelEvent) => {
+    if (el) {
+      // 위로 휠이 -, 아래로 휠이 +
+      el.scrollLeft = scrollLeft - (e.deltaY > 0 ? -30 : 30)
+      scrollLeft = el.scrollLeft
+    }
+  }
 
-  listeners.forEach(({ type, func }) => {
-    el.addEventListener(type, func)
-  })
+  el.addEventListener('mousedown', mouseDown)
+  el.addEventListener('mouseleave', mouseLeaveOrUp)
+  el.addEventListener('mouseup', mouseLeaveOrUp)
+  el.addEventListener('mousemove', mouseMove)
+  el.addEventListener('wheel', wheelMove)
 
   onBeforeUnmount(() => {
-    listeners.forEach(({ type, func }) => {
-      el.removeEveltListener(type, func)
-    })
+    el.removeEventListener('mousedown', mouseDown)
+    el.removeEventListener('mouseleave', mouseLeaveOrUp)
+    el.removeEventListener('mouseup', mouseLeaveOrUp)
+    el.removeEventListener('mousemove', mouseMove)
+    el.removeEventListener('wheel', wheelMove)
     clearInterval(renewHourDiffIntervalId)
   })
 })
