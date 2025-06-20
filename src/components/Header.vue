@@ -190,6 +190,7 @@ const reloginGoogle = async () => {
 
 const navLinks = ref([
   { name: '내 동영상', path: '/videos' },
+  { name: '인급동', path: '/hot-videos' },
   // 필요하면 더 추가 가능
 ])
 
