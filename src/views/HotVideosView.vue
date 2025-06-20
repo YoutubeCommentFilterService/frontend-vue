@@ -1,5 +1,5 @@
 <template>
-  <div ref="containerRef" class="flex relative w-full flex-col overflow-auto">
+  <div class="flex relative w-full flex-col overflow-auto">
     <!-- 상단에 고정으로 카테고리 위치 -->
     <div
       ref="categoryHeaderRef"
@@ -23,8 +23,16 @@
       </div>
     </div>
     <!-- 그 밑에 데이터 존재 -->
-    <div class="flex grow-1 flex-col">
+    <div id="hot-video-items" ref="scrollableRef" class="flex grow-1 flex-col overflow-y-auto">
       <HotVideoItem :items="videos[selectedCategory]?.items"> </HotVideoItem>
+      <div>
+        <button
+          class="inline-block px-2 py-2 absolute right-2 bottom-2 cursor-pointer bg-blue-400"
+          @click="scrollToUp"
+        >
+          맨위로
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -37,7 +45,7 @@ import HotVideoItem from '@/components/hot-videos/HotVideoItem.vue'
 
 const categoryHeaderRef = ref(null)
 const dragStartRef = ref(null)
-const containerRef = ref(null)
+const scrollableRef = ref(null)
 const baseTime = ref<number>(0)
 const videos = ref<HotVideoDisplayResource>({ '': { items: [], key: -1 } })
 const selectedCategory = ref<string>('')
@@ -68,8 +76,15 @@ const getHotVideos = async () => {
   )
 }
 
+const scrollToUp = () => {
+  scrollableRef.value.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  })
+}
+
 const clicked = (event, category: string) => {
-  containerRef.value.scrollTo({ bottom: 0, behavior: 'smooth' })
+  scrollToUp()
   selectedCategory.value = category
 }
 
