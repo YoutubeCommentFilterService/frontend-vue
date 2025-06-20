@@ -73,6 +73,7 @@ export const useAuthStore = defineStore('auth', () => {
     csrfToken,
     backup,
     restore,
+    channelId,
   }
 })
 
