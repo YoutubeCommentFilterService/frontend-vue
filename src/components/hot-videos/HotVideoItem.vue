@@ -1,7 +1,5 @@
 <template>
   <div
-    v-for="(item, idx) in items"
-    :key="item.videoId"
     class="my-2 flex flex-row select-none gap-2"
     :class="{ 'bg-white': authStore.channelId === item.channelId }"
   >
@@ -65,7 +63,8 @@ import type { HotVideoData } from '@/types/hot-videos-insterface'
 import { useAuthStore } from '@/stores/auth'
 
 defineProps<{
-  items: HotVideoData[] | undefined | null
+  item: HotVideoData
+  idx: number
 }>()
 
 const authStore = useAuthStore()

@@ -3,10 +3,10 @@
     <!-- 상단에 고정으로 카테고리 위치 -->
     <div
       ref="categoryHeaderRef"
-      class="flex flex-row w-full sticky top-0 z-10 bg-amber-100 overflow-x-auto whitespace-nowrap shrink-0 py-1"
+      class="flex flex-row w-full sticky top-0 z-10 overflow-x-auto whitespace-nowrap shrink-0 py-1"
     >
       <div class="flex justify-center min-w-fit w-full">
-        <div class="flex flex-row gap-4 px-4">
+        <div class="flex flex-row gap-4 px-4 items-center">
           <div
             v-for="category in categories"
             :key="category"
@@ -16,6 +16,10 @@
               }
             "
             class="select-none cursor-pointer"
+            :class="{
+              'border-double border-sky-500 border-2 px-2 py-0.5 rounded-4xl':
+                category === selectedCategory,
+            }"
           >
             {{ category }}
           </div>
@@ -24,7 +28,8 @@
     </div>
     <!-- 그 밑에 데이터 존재 -->
     <div id="hot-video-items" ref="scrollableRef" class="flex grow-1 flex-col overflow-y-auto">
-      <HotVideoItem :items="videos[selectedCategory]?.items"> </HotVideoItem>
+      <HotVideoItem v-for="(item, idx) in items" :item="item" :idx="idx" v-bind:key="item.videoId">
+      </HotVideoItem>
       <div>
         <button
           class="inline-block px-2 py-2 absolute right-2 bottom-2 cursor-pointer bg-blue-400"
@@ -49,6 +54,7 @@ const scrollableRef = ref<HTMLElement | null>(null)
 const baseTime = ref<number>(0)
 const videos = ref<HotVideoDisplayResource>({ '': { items: [], key: -1 } })
 const selectedCategory = ref<string>('')
+const items = computed(() => videos.value[selectedCategory.value].items)
 const categories = computed(() =>
   Object.entries(videos.value as Record<string, { key: number }>)
     .sort(([aKey, aVal], [bKey, bVal]) => aVal.key - bVal.key)
