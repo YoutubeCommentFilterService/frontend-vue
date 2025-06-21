@@ -54,7 +54,7 @@ const scrollableRef = ref<HTMLElement | null>(null)
 const baseTime = ref<number>(0)
 const videos = ref<HotVideoDisplayResource>({ '': { items: [], key: -1 } })
 const selectedCategory = ref<string>('')
-const items = computed(() => videos.value[selectedCategory.value].items)
+const items = computed(() => videos.value[selectedCategory.value]?.items)
 const categories = computed(() =>
   Object.entries(videos.value as Record<string, { key: number }>)
     .sort(([aKey, aVal], [bKey, bVal]) => aVal.key - bVal.key)
