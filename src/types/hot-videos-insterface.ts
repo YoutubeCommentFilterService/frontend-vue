@@ -6,6 +6,7 @@ interface HotVideoData {
   publishedAt: string
   thumbnailUrl: string
   viewCount: string
+  summarized: string
 
   channelId: string
   channelTitle: string

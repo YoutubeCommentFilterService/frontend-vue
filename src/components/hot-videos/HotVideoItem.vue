@@ -9,6 +9,7 @@
     <div
       class="min-w-[240px] max-w-[240px] relative cursor-pointer"
       @click="() => moveToYoutube('video', item.videoId)"
+      @mousedown="(event) => mouseWheelClick(event, 'video', item.videoId)"
     >
       <div class="relative object-cover">
         <img :src="item.thumbnailUrl" class="w-full" />
@@ -18,40 +19,63 @@
           <p class="">
             {{ convertTimeFormat(item.publishedAt) }}
           </p>
-          <p class="inline-block max-w-full">
+          <p class="max-w-full">
             {{ item.viewCount }}
           </p>
         </div>
       </div>
     </div>
-    <div class="flex flex-col ml-1 overflow-x-hidden gap-2">
-      <p
-        class="inline-block max-w-full truncate cursor-pointer"
-        @click="() => moveToYoutube('video', item.videoId)"
-      >
-        {{ item.title }}
-      </p>
-      <div class="flex flex-col items-stretch gap-2">
-        <div class="flex flex-row h-12 gap-2">
-          <img :src="item.channelThumbnailUrl" class="h-full object-contain rounded-full" />
-          <div class="flex flex-col justify-center">
-            <p
-              class="cursor-pointer inline-block truncate"
-              @click="() => moveToYoutube('channel', item.channelId)"
-            >
-              {{ item.channelTitle }}
-            </p>
-            <p
-              class="text-sm cursor-pointer inline-block truncate"
-              @click="() => moveToYoutube('channel', item.channelHandler)"
-            >
-              {{ item.channelHandler }}, {{ item.subscriberCount }}
-            </p>
-          </div>
+    <div class="flex flex-row overflow-x-hidden grow-1 gap-2">
+      <div class="flex flex-col ml-1 overflow-x-hidden gap-2 grow-1">
+        <div>
+          <span
+            class="truncate cursor-pointer"
+            @click="() => moveToYoutube('video', item.videoId)"
+            @mousedown="(event) => mouseWheelClick(event, 'video', item.videoId)"
+          >
+            {{ item.title }}
+          </span>
         </div>
+        <div class="flex flex-col items-stretch gap-2">
+          <div class="flex flex-row h-12 gap-2">
+            <img :src="item.channelThumbnailUrl" class="h-full object-contain rounded-full" />
+            <div class="flex flex-col justify-center">
+              <div>
+                <span
+                  class="cursor-pointer truncate"
+                  @click="() => moveToYoutube('channel', item.channelId)"
+                  @mousedown="(event) => mouseWheelClick(event, 'channel', item.channelId)"
+                >
+                  {{ item.channelTitle }}
+                </span>
+              </div>
+              <div>
+                <span
+                  class="text-sm cursor-pointer truncate"
+                  @click="() => moveToYoutube('channel', item.channelHandler)"
+                  @mousedown="(event) => mouseWheelClick(event, 'channel', item.channelHandler)"
+                >
+                  {{ item.channelHandler }}, {{ item.subscriberCount }}
+                </span>
+              </div>
+            </div>
+          </div>
 
-        <p class="text-xs line-clamp-2 wrap-break-word">
-          {{ item.tags }}
+          <p class="text-xs line-clamp-2 wrap-break-word">
+            {{ item.tags }}
+          </p>
+        </div>
+      </div>
+      <div
+        class="flex flex-col items-center justify-center min-w-32 sm:min-w-48 md:min-w-64 lg:min-w-80 xl:min-w-96 max-w-32 sm:max-w-48 md:max-w-64 lg:max-w-80 xl:max-w-96"
+        v-if="item.summarized"
+      >
+        <p
+          v-for="summarizedText in item.summarized.split('\n')"
+          :key="summarizedText"
+          class="text-xs gap-2 w-full line-clamp-2 wrap-normal"
+        >
+          {{ summarizedText }}
         </p>
       </div>
     </div>
@@ -92,6 +116,13 @@ const moveToYoutube = (type: string, ids: string) => {
     } else {
       window.open(`https://www.youtube.com/channel/${ids}`)
     }
+  }
+}
+
+const mouseWheelClick = (event: MouseEvent, type: string, ids: string) => {
+  if (event.button === 1) {
+    event.preventDefault()
+    moveToYoutube(type, ids)
   }
 }
 </script>
